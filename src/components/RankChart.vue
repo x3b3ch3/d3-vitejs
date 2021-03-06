@@ -1,5 +1,12 @@
 <template>
-  <h1>top <input id="top" type="number" v-model="top"></h1>
+  <h1>top</h1>
+  <input id="top" type="number" v-model="top" min="1" max="107">
+  <select name="cars" id="cars" multiple>
+    <option value="volvo">Volvo</option>
+    <option value="saab">Saab</option>
+    <option value="opel">Opel</option>
+    <option value="audi">Audi</option>
+  </select>
   <p class="chart">
   </p>
 </template>
@@ -78,7 +85,7 @@ export default {
         .attr('fill-opacity',.05)
       })
 
-      this.prop = 'pts'
+      this.prop = 'pos'
       let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.prop]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.prop])))]
       if (this.prop === 'pos') yDomain = yDomain.reverse() 
       this.y = d3.scaleLinear()
@@ -124,20 +131,11 @@ export default {
           .attr('stroke-linecap', 'round')
       const pathes = path.selectAll('path')
         .data(this.data.series)
-              .join(
-                enter => {
-                  return enter.append('path')
+              .join('path')
                     .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
                     .style('mix-blend-mode', 'multiply')
                     .attr('d', d => line(d.values.map(v => v[this.prop])))
-                },
-                update => {
-                  return update.attr('d', d => line(d.values.map(v => v[this.prop])))
-                },
-                function(exit) {
-                  return exit.remove()
-                }
-              )
+              
 
       svg.call(this.hover, pathes)
 
@@ -145,30 +143,36 @@ export default {
         node : svg.node(),
         update : () => {
           yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.prop]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.prop])))]
+          if (this.prop === 'pos') yDomain = yDomain.reverse() 
           this.y = d3.scaleLinear()
             .domain(yDomain).nice()
             .range([height - margin.bottom, margin.top])
 
-          yAxisEl.call(yAxis)
-          yAxisGridEl.call(yAxisGrid)
+          yAxisEl.transition().call(yAxis)
+          yAxisGridEl.transition().call(yAxisGrid)
 
           path.selectAll('path')
               .data(this.data.series)
               .join(
                 enter => {
-                  return enter.append('path').attr('stroke', d => colors[d.abbreviation] || 'steelblue')
-                    .style('mix-blend-mode', 'multiply')
-                    .attr('d', d => line(d.values.map(v => v[this.prop])))
+                  const tpath = enter.append('path')
+                  return tpath.transition().on('end', () => {
+                    tpath.attr('stroke', d => colors[d.abbreviation] || 'steelblue')
+                      .style('mix-blend-mode', 'multiply')
+                      .attr('d', d => line(d.values.map(v => v[this.prop])))
+                  })
                 },
-                update => {
-                  return update.attr('d', d => line(d.values.map(v => v[this.prop])))
-                },
-                function(exit) {
-                  return exit.remove()
-                }
+                update =>  update.transition()
+                  .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
+                  .style('mix-blend-mode', 'multiply')
+                  .attr('d', d => line(d.values.map(v => v[this.prop])))
+                  .on('end', () => {
+                    svg.call(this.hover, path.selectAll('path'))
+                  }),
+                exit => exit.remove()
               )
 
-          svg.call(this.hover, path.selectAll('path'))
+          
         }
       }
     },
