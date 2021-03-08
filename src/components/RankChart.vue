@@ -1,44 +1,33 @@
 <template>
   <h1>top</h1>
-  <input id="top" type="number" v-model="top" min="1" max="107">
-  <select name="cars" id="cars" multiple>
-    <option value="volvo">Volvo</option>
-    <option value="saab">Saab</option>
-    <option value="opel">Opel</option>
-    <option value="audi">Audi</option>
-  </select>
-  <p class="chart">
-  </p>
+  <p class="chart"></p>
 </template>
 
 <script setup>
 import { defineProps, reactive } from 'vue'
 import * as d3 from 'd3'
-import teams from '/datas/teams.min.json'
+import allteams from '/datas/teams.min.json'
 import colors from '/datas/colors.json'
 import wrcs from '/datas/wrcs.json'
 import sixNations from '/datas/6nations.json'
 import { DateTime } from 'luxon'
-
 </script>
 
 <script>
 export default {
-  mounted() {
-    this.fetch()
-  },
   methods: {
-    fetch() {
+    fetch(allteams) {
       const promises = [];
       let dates = [];
-      const topTeams = Object.keys(teams).slice(0,+this.top).map(uid => {
+      const topTeams = allteams.map(team => {
+        const uid = team.id
         const promise = d3.json(`./datas/teams/${uid}.min.json`)
                           .then(datas => {
           if (!dates.length) dates = Object.keys(datas).map(d=>new Date(d))
           Object.assign(topTeams.find(({id}) => id == uid), {values:Object.values(datas)})
         })
         promises.push(promise)
-        return Object.assign({id:uid},teams[uid])
+        return team
       })
       Promise.all(promises).then(datas =>  {
         this.data = {series: topTeams,dates}
@@ -256,13 +245,14 @@ export default {
     }
   },
   data() {
-    return { top: 10, data:{} }
+    return { data:{}  }
   },
   watch: {
-    top: function(val, oldVal) {
-      this.fetch()
+    teams(val, oldVal) {
+      this.fetch(val)
     }
-  }
+  },
+  props: ['teams']
 } 
 
 </script>
