@@ -19,7 +19,7 @@ export default {
       let dates = [];
       const topTeams = this.allteams.map(team => {
         const uid = team.id
-        const promise = d3.json(`../../datas/teams/${uid}.min.json`)
+        const promise = d3.json(`../datas/teams/${uid}.min.json`)
                           .then(datas => {
           if (!dates.length) dates = Object.keys(datas).map(d=>new Date(d))
           Object.assign(topTeams.find(({id}) => id == uid), {values:Object.values(datas)})
