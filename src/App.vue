@@ -1,6 +1,6 @@
 <template>
   <img alt="Vue logo" src="./assets/mruLogo.svg"/>
-  <Aside top="10" @changed-team-ids="this.updateIds" @changed-type="this.updateType" />
+  <Aside top="10" @changed-team-ids="updateIds" @changed-type="updateType" />
   <RankChart v-bind:teams="teams" v-bind:type="type" />
 </template>
 
