@@ -8,11 +8,11 @@
 		  		v-bind:class="{'active' : !index }"
 		  		v-for="(value, index) in types" @click="typesLiClick">{{ value.name }}</li>
 		</ul>
-		Select teams
+		Select teams (10 max)
 	  <ul class="teams">
 		  <li :key="key" 
 		  		v-bind:data-id="key"
-		  		v-bind:class="{'active' : index < top }"
+		  		v-bind:class="{'active' : key === '42' || key === '37' }"
 		  		v-for="(value, key, index) in teams" @click="teamsLiClick">{{ value.name }} ({{ value.abbreviation }})</li>
 		</ul>
 	</aside>
@@ -27,6 +27,7 @@ import teams from '/datas/teams.min.json'
 <script>
 export default {
 	mounted() {
+		this.lis = [...document.querySelectorAll('.teams li.active')]
 		this.emitIds()
 		this.emitType()
 	},
@@ -36,18 +37,30 @@ export default {
 			event.target.classList.toggle('active')
 			this.emitType()
 		},
+		emitType() {
+			this.$emit('changed-type', document.querySelector('.types li.active').dataset.id)
+		},
 		teamsLiClick(event) {
 			event.target.classList.toggle('active')
+			// si el courant est actif, ajouter au tableau
+			if (event.target.classList.contains('active')) 
+				this.lis.push(event.target)
+			// sinon, retirer au tableau
+			else
+				this.lis.splice(this.lis.indexOf(event.target),1)
+
+			// si 10 éléménts, retirer et éteindre le premier du tableau
+			if (this.lis.length > 10)
+				this.lis.shift().classList.remove('active')
+
 			this.emitIds()
 		},
-		emitIds() {
-			this.$emit('changed-team-ids', [...document.querySelectorAll('.teams li.active')].map(e => {
+		emitIds(event) {
+			console.log(this.lis.map(e => e.dataset.id))
+			this.$emit('changed-team-ids', this.lis.map(e => {
 				const id = e.dataset.id
 				return Object.assign({id},teams[id])
 			}))
-		},
-		emitType() {
-			this.$emit('changed-type', document.querySelector('.types li.active').dataset.id)
 		},
 		toggle(event) {
 			event.target.parentNode.classList.toggle('closed')
