@@ -39,8 +39,8 @@ export default {
     },
     chart() {
       const width = screen.availWidth
-      const height = screen.availHeight - 300
-      const margin = ({top: 20, right: 200, bottom: 20, left: 200})
+      const height = screen.availHeight
+      const margin = ({top: 20, right: 20, bottom: 20, left: 20})
 
       this.x = d3.scaleUtc()
         .domain(d3.extent(this.data.dates))
@@ -154,11 +154,11 @@ export default {
               .join(
                 enter => {
                   const tpath = enter.append('path')
-                  return tpath.transition().on('end', () => {
+                  // return tpath.transition().on('end', () => {
                     tpath.attr('stroke', d => colors[d.abbreviation] || 'steelblue')
                       .style('mix-blend-mode', 'multiply')
                       .attr('d', d => line(d.values.map(v => v[this.type])))
-                  })
+                  // })
                 },
                 update =>  update.transition()
                   .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
@@ -193,7 +193,7 @@ export default {
 
       const legend = dot.append('g')
         .attr('font-family', 'sans-serif')
-        .attr('font-size', 12)
+        .attr('font-size', 14)
         .attr('text-anchor', 'middle')
 
       legend.append('rect')
@@ -227,7 +227,7 @@ export default {
         const ym = y.invert(pointer[1]);
         const i = d3.bisectCenter(data.dates, xm);
         const s = d3.least(data.series, d => Math.abs(d.values.map(v => v[prop])[i] - ym));
-        path.style('stroke', d => d === s ? null : '#ddd').filter(d => d === s).raise();
+        path.style('stroke', d => d === s ? null : '#999').filter(d => d === s).raise();
         dot.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
         legend.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
         legend.select('text.name').text(s.name);
@@ -241,7 +241,7 @@ export default {
       function entered() {
         path
           .style('mix-blend-mode', null)
-          .style('stroke', '#ddd');
+          .style('stroke', '#999');
         dot.attr('display', null)
       }
 
@@ -269,6 +269,12 @@ export default {
 } 
 
 </script>
-
 <style>
+  p.chart {
+    margin: 0 200px;
+    height: calc(100vh - 200px);
+  }
+  .tick text {
+    font-size: 16px;
+  }
 </style>

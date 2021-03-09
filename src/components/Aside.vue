@@ -1,14 +1,13 @@
 <template>
-	<aside>
-		<button class="chevron" @click="toggle">&lt;</button>
-		Select props
+	<aside @mouseenter="open" @mouseleave="close">
+		<h1>Select props</h1>
 		<ul class="types">
 		  <li :key="index" 
 		  		v-bind:data-id="value.field"
 		  		v-bind:class="{'active' : !index }"
 		  		v-for="(value, index) in types" @click="typesLiClick">{{ value.name }}</li>
 		</ul>
-		Select teams (10 max)
+		<h1>Select teams (10 max)</h1>
 	  <ul class="teams">
 		  <li :key="key" 
 		  		v-bind:data-id="key"
@@ -30,6 +29,7 @@ export default {
 		this.lis = [...document.querySelectorAll('.teams li.active')]
 		this.emitIds()
 		this.emitType()
+		setTimeout(this.close, 2000)
 	},
 	methods: {
 		typesLiClick(event) {
@@ -56,19 +56,21 @@ export default {
 			this.emitIds()
 		},
 		emitIds(event) {
-			console.log(this.lis.map(e => e.dataset.id))
 			this.$emit('changed-team-ids', this.lis.map(e => {
 				const id = e.dataset.id
 				return Object.assign({id},teams[id])
 			}))
 		},
-		toggle(event) {
-			event.target.parentNode.classList.toggle('closed')
+		toggle(flag) {
+			this.$el.classList.toggle('closed',flag)
+		},
+		open() {
+			this.toggle(false)
+		},
+		close() {
+			this.toggle(true)
 		}
 	},
-	props: {
-   top: String
- 	},
  	data() {
  		return {
  			types: [{
@@ -93,9 +95,18 @@ export default {
 		background-color: rgba(255,255,255,.9);
 		border-left: 1px solid grey;
 		transition: right 1s;
+		box-shadow: -1px 0 10px rgba(0,0,0,.5);
 	}
 	aside.closed {
-		right: -250px
+		right: -240px
+	}
+	h1 {
+		text-transform: uppercase;
+		color: darkgrey;
+		font-size: 12pt;
+		border-bottom: 1px solid darkgrey;
+		text-align: left;
+		padding-left: 20px
 	}
 	ul.teams {
 		height: calc(100% - 160px);
