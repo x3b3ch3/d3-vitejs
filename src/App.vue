@@ -1,7 +1,7 @@
 <template>
   <img alt="Vue logo" src="./assets/mruLogo.svg"/>
-  <Aside top="10" @changed-team-ids="this.fetch" />
-  <RankChart v-bind:teams="teams" />
+  <Aside top="10" @changed-team-ids="this.updateIds" @changed-type="this.updateType" />
+  <RankChart v-bind:teams="teams" v-bind:type="type" />
 </template>
 
 <script setup>
@@ -12,13 +12,17 @@ import Aside from './components/Aside.vue'
 <script>
 	export default {
 		methods: {
-			fetch(ids) {
+			updateIds(ids) {
 				this.teams = ids
+			},
+			updateType(type) {
+				this.type = type
 			}
 		},
 		data() {
       return {
         teams: [],
+        type: 'pos'
       }
     },
 	}

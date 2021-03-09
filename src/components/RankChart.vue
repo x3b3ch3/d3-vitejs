@@ -1,12 +1,10 @@
 <template>
-  <h1>top</h1>
   <p class="chart"></p>
 </template>
 
 <script setup>
 import { defineProps, reactive } from 'vue'
 import * as d3 from 'd3'
-import allteams from '/datas/teams.min.json'
 import colors from '/datas/colors.json'
 import wrcs from '/datas/wrcs.json'
 import sixNations from '/datas/6nations.json'
@@ -16,10 +14,10 @@ import { DateTime } from 'luxon'
 <script>
 export default {
   methods: {
-    fetch(allteams) {
+    fetch() {
       const promises = [];
       let dates = [];
-      const topTeams = allteams.map(team => {
+      const topTeams = this.allteams.map(team => {
         const uid = team.id
         const promise = d3.json(`./datas/teams/${uid}.min.json`)
                           .then(datas => {
@@ -30,7 +28,7 @@ export default {
         return team
       })
       Promise.all(promises).then(datas =>  {
-        this.data = {series: topTeams,dates}
+        this.data = {series: topTeams, dates}
         if (!this.chartEl) {
           this.chartEl = this.chart()
           d3.select('body .chart').node().appendChild(this.chartEl.node)
@@ -74,9 +72,8 @@ export default {
         .attr('fill-opacity',.05)
       })
 
-      this.prop = 'pos'
-      let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.prop]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.prop])))]
-      if (this.prop === 'pos') yDomain = yDomain.reverse() 
+      let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))]
+      if (this.type === 'pos') yDomain = yDomain.reverse() 
       this.y = d3.scaleLinear()
         .domain(yDomain).nice()
         .range([height - margin.bottom, margin.top])
@@ -120,10 +117,22 @@ export default {
           .attr('stroke-linecap', 'round')
       const pathes = path.selectAll('path')
         .data(this.data.series)
-              .join('path')
-                    .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
-                    .style('mix-blend-mode', 'multiply')
-                    .attr('d', d => line(d.values.map(v => v[this.prop])))
+          .join('path')
+            .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
+            .style('mix-blend-mode', 'multiply')
+            .attr('d', d => line(d.values.map(v => v[this.type])))
+              // .join(
+              //   enter => {
+              //     enter.append('path').attr('stroke', d => colors[d.abbreviation] || 'steelblue')
+              //       .style('mix-blend-mode', 'multiply')
+              //       .attr('d', d => line(d.values.map(v => v[this.type])))
+              //   },
+              //   update =>  update
+              //     .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
+              //     .style('mix-blend-mode', 'multiply')
+              //     .attr('d', d => line(d.values.map(v => v[this.type]))),
+              //   exit => exit.remove()
+              // )
               
 
       svg.call(this.hover, pathes)
@@ -131,8 +140,8 @@ export default {
       return {
         node : svg.node(),
         update : () => {
-          yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.prop]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.prop])))]
-          if (this.prop === 'pos') yDomain = yDomain.reverse() 
+          yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))]
+          if (this.type === 'pos') yDomain = yDomain.reverse() 
           this.y = d3.scaleLinear()
             .domain(yDomain).nice()
             .range([height - margin.bottom, margin.top])
@@ -148,13 +157,13 @@ export default {
                   return tpath.transition().on('end', () => {
                     tpath.attr('stroke', d => colors[d.abbreviation] || 'steelblue')
                       .style('mix-blend-mode', 'multiply')
-                      .attr('d', d => line(d.values.map(v => v[this.prop])))
+                      .attr('d', d => line(d.values.map(v => v[this.type])))
                   })
                 },
                 update =>  update.transition()
                   .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
                   .style('mix-blend-mode', 'multiply')
-                  .attr('d', d => line(d.values.map(v => v[this.prop])))
+                  .attr('d', d => line(d.values.map(v => v[this.type])))
                   .on('end', () => {
                     svg.call(this.hover, path.selectAll('path'))
                   }),
@@ -208,7 +217,7 @@ export default {
       const x = this.x;
       const y = this.y;
       const data = this.data;
-      const prop = this.prop;
+      const prop = this.type;
       const legendMargin = 7;
 
       function moved(event) {
@@ -249,10 +258,14 @@ export default {
   },
   watch: {
     teams(val, oldVal) {
-      this.fetch(val)
+      this.allteams = val
+      this.fetch()
+    },
+    type(val, oldVal) {
+      this.fetch()
     }
   },
-  props: ['teams']
+  props: ['teams','type']
 } 
 
 </script>
