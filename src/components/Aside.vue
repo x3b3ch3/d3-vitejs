@@ -95,7 +95,7 @@ export default {
 		background-color: rgba(255,255,255,.9);
 		border-left: 1px solid grey;
 		transition: right 1s;
-		box-shadow: -1px 0 10px rgba(0,0,0,.5);
+		box-shadow: -1px 0 10px rgba(0,0,0,.2);
 	}
 	aside.closed {
 		right: -240px

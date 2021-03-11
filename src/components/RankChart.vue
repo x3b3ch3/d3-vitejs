@@ -7,6 +7,7 @@ import { defineProps, reactive } from 'vue'
 import * as d3 from 'd3'
 import colors from '/datas/colors.json'
 import wrcs from '/datas/wrcs.json'
+import rcs from '/datas/rcs.json'
 import sixNations from '/datas/6nations.json'
 import { DateTime } from 'luxon'
 </script>
@@ -57,8 +58,8 @@ export default {
         .attr('transform', `translate(${this.x(start)},${margin.top})`)
         .attr('width', this.x(end)-this.x(start))
         .attr('height', height-margin.top-margin.bottom)
-        .attr('fill',0)
-        .attr('fill-opacity',.1)
+        .attr('fill','blue')
+        .attr('fill-opacity',.07)
       })
 
       sixNations.forEach(e => {
@@ -68,9 +69,59 @@ export default {
         .attr('transform', `translate(${this.x(start)},${margin.top})`)
         .attr('width', this.x(end)-this.x(start))
         .attr('height', height-margin.top-margin.bottom)
-        .attr('fill',0)
-        .attr('fill-opacity',.05)
+        .attr('fill','red')
+        .attr('fill-opacity',.07)
       })
+
+      rcs.forEach(e => {
+        const start = new Date(e.start.split('-').toString())
+        const end = new Date(e.end.split('-').toString())
+        svg.append('rect')
+        .attr('transform', `translate(${this.x(start)},${margin.top})`)
+        .attr('width', this.x(end)-this.x(start))
+        .attr('height', height-margin.top-margin.bottom)
+        .attr('fill','green')
+        .attr('fill-opacity',.07)
+      })
+
+      const legend = svg.append('g')
+        .attr('transform', `translate(${width/2+margin.left/2},${height+margin.top+margin.bottom})`)
+
+      legend.append('rect')
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('fill','red')
+        .attr('fill-opacity',.07)
+        .attr('stroke','darkgrey')
+        .attr('x',-240)
+        .attr('y',-15)
+      legend.append('text')
+        .attr('x',-190)
+        .text('6 Nations cups')
+
+      legend.append('rect')
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('fill','blue')
+        .attr('fill-opacity',.07)
+        .attr('stroke','darkgrey')
+        .attr('x',-70)
+        .attr('y',-15)
+      legend.append('text')
+        .attr('x',-20)
+        .text('World cups')
+
+      legend.append('rect')
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('fill','green')
+        .attr('fill-opacity',.07)
+        .attr('stroke','darkgrey')
+        .attr('x',100)
+        .attr('y',-15)
+      legend.append('text')
+        .attr('x',150)
+        .text('Tri Nations / Rugby Championships')
 
       let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))]
       if (this.type === 'pos') yDomain = yDomain.reverse() 
@@ -227,7 +278,7 @@ export default {
         const ym = y.invert(pointer[1]);
         const i = d3.bisectCenter(data.dates, xm);
         const s = d3.least(data.series, d => Math.abs(d.values.map(v => v[prop])[i] - ym));
-        path.style('stroke', d => d === s ? null : '#999').filter(d => d === s).raise();
+        path.style('stroke', d => d === s ? null : '#bbb').filter(d => d === s).raise();
         dot.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
         legend.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
         legend.select('text.name').text(s.name);
@@ -241,7 +292,7 @@ export default {
       function entered() {
         path
           .style('mix-blend-mode', null)
-          .style('stroke', '#999');
+          .style('stroke', '#bbb');
         dot.attr('display', null)
       }
 
