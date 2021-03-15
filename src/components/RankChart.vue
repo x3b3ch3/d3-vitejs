@@ -247,7 +247,7 @@ export default {
         .attr('font-size', 14)
         .attr('text-anchor', 'middle')
 
-      legend.append('rect')
+      const back = legend.append('rect')
         .attr('fill', '#FFF')
         .attr('stroke', '#000')
         .attr('stroke-opacity', .3)
@@ -255,21 +255,24 @@ export default {
 
       legend.append('text')
         .attr('class', 'date')
-        .attr('y', -38);
+        .attr('y', -60);
 
       legend.append('text')
         .attr('class', 'name')
-        .attr('y', -24);
+        .attr('y', -40);
 
       legend.append('text')
         .attr('class', 'score')
-        .attr('y', -10);
+        .attr('y', -20);
 
       const x = this.x;
       const y = this.y;
       const data = this.data;
       const prop = this.type;
-      const legendMargin = 7;
+      const legendMargin = 20;
+
+      back.attr('y', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().y))-legendMargin*6/8)
+      back.attr('x', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().x))-legendMargin)
 
       function moved(event) {
         event.preventDefault();
@@ -283,10 +286,8 @@ export default {
         legend.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
         legend.select('text.name').text(s.name);
         legend.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts}`)[i].toString())
-        legend.select('rect').attr('width', () => 2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))
-        legend.select('rect').attr('height', () => 2*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))
-        legend.select('rect').attr('y', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().y))-legendMargin)
-        legend.select('rect').attr('x', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().x))-legendMargin)
+        back.attr('width', () => 2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))
+        back.attr('height', () => 2*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))
       }
 
       function entered() {
