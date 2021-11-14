@@ -88,5 +88,10 @@
     "name":"Tournoi des 6 nations 2021",
     "start": "2021-2-6",
     "end": "2021-3-26"
+  },
+  {
+    "name":"Tournoi des 6 nations 2022",
+    "start": "2022-2-5",
+    "end": "2022-3-19"
   }
 ]
