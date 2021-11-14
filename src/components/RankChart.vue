@@ -8,6 +8,7 @@ import * as d3 from 'd3'
 import colors from '/datas/colors.json'
 import wrcs from '/datas/wrcs.json'
 import rcs from '/datas/rcs.json'
+import automn from '/datas/automn.json'
 import sixNations from '/datas/6nations.json'
 import { DateTime } from 'luxon'
 </script>
@@ -59,6 +60,17 @@ export default {
         .attr('width', this.x(end)-this.x(start))
         .attr('height', height-margin.top-margin.bottom)
         .attr('fill','blue')
+        .attr('fill-opacity',.07)
+      })
+
+      automn.forEach(e => {
+        const start = new Date(e.start.split('-').toString())
+        const end = new Date(e.end.split('-').toString())
+        svg.append('rect')
+        .attr('transform', `translate(${this.x(start)},${margin.top})`)
+        .attr('width', this.x(end)-this.x(start))
+        .attr('height', height-margin.top-margin.bottom)
+        .attr('fill','orange')
         .attr('fill-opacity',.07)
       })
 
@@ -122,6 +134,18 @@ export default {
       legend.append('text')
         .attr('x',150)
         .text('Tri Nations / Rugby Championships')
+
+      legend.append('rect')
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('fill','orange')
+        .attr('fill-opacity',.07)
+        .attr('stroke','darkgrey')
+        .attr('x',100)
+        .attr('y',-15)
+      legend.append('text')
+        .attr('x',150)
+        .text(`Coupe d'automne des nations`)
 
       let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))]
       if (this.type === 'pos') yDomain = yDomain.reverse() 
@@ -271,9 +295,6 @@ export default {
       const prop = this.type;
       const legendMargin = 20;
 
-      back.attr('y', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().y))-legendMargin*6/8)
-      back.attr('x', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().x))-legendMargin)
-
       function moved(event) {
         event.preventDefault();
         const pointer = d3.pointer(event, this);
@@ -287,7 +308,11 @@ export default {
         legend.select('text.name').text(s.name);
         legend.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts}`)[i].toString())
         back.attr('width', () => 2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))
-        back.attr('height', () => 2*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))
+        back.attr('height', () => 1.5*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))
+        // back.attr('y', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().y))-legendMargin*.5)
+        // back.attr('x', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().x))-legendMargin)
+        back.attr('x', () => (-2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))/2)
+        back.attr('y', () => (-1.5*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))/2)
       }
 
       function entered() {

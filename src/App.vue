@@ -37,4 +37,16 @@ import Aside from './components/Aside.vue'
   color: #2c3e50;
   margin-top: 20px;
 }
+[data-flag-pos-x]:before {
+	content: '';
+	background: url(./assets/tLogo20x-sprite@x2.png) no-repeat;
+  background-size: 280px 276px;
+  background-position-x: attr(data-flag-pos-x);
+  background-position-y: attr(data-flag-pos-y px);
+  width: 20px;
+	height: 25px;
+	display: inline-block;
+	margin-right: 5px;
+	vertical-align: middle;
+}
 </style>

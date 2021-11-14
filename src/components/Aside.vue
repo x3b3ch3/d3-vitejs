@@ -11,6 +11,8 @@
 	  <ul class="teams">
 		  <li :key="key" 
 		  		v-bind:data-id="key"
+		  		v-bind:data-flag-pos-x="200"
+		  		v-bind:data-flag-pos-y="200"
 		  		v-bind:class="{'active' : key === '42' || key === '37' }"
 		  		v-for="(value, key, index) in teams" @click="teamsLiClick">{{ value.name }} ({{ value.abbreviation }})</li>
 		</ul>
