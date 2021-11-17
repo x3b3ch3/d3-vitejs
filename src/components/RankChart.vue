@@ -46,150 +46,88 @@ export default {
 
       this.x = d3.scaleUtc()
         .domain(d3.extent(this.data.dates))
-        .range([margin.left, width - margin.right])
+        .range([margin.left, width - margin.right]);
 
       const svg = d3.create('svg')
         .attr('viewBox', [0, 0, width, height])
         .style('overflow', 'visible');
 
-      wrcs.forEach(e => {
-        const start = new Date(e.start.split('-').toString())
-        const end = new Date(e.end.split('-').toString())
-        svg.append('rect')
-        .attr('transform', `translate(${this.x(start)},${margin.top})`)
-        .attr('width', this.x(end)-this.x(start))
-        .attr('height', height-margin.top-margin.bottom)
-        .attr('fill','blue')
-        .attr('fill-opacity',.07)
-      })
-
-      automn.forEach(e => {
-        const start = new Date(e.start.split('-').toString())
-        const end = new Date(e.end.split('-').toString())
-        svg.append('rect')
-        .attr('transform', `translate(${this.x(start)},${margin.top})`)
-        .attr('width', this.x(end)-this.x(start))
-        .attr('height', height-margin.top-margin.bottom)
-        .attr('fill','orange')
-        .attr('fill-opacity',.07)
-      })
-
-      sixNations.forEach(e => {
-        const start = new Date(e.start.split('-').toString())
-        const end = new Date(e.end.split('-').toString())
-        svg.append('rect')
-        .attr('transform', `translate(${this.x(start)},${margin.top})`)
-        .attr('width', this.x(end)-this.x(start))
-        .attr('height', height-margin.top-margin.bottom)
-        .attr('fill','red')
-        .attr('fill-opacity',.07)
-      })
-
-      rcs.forEach(e => {
-        const start = new Date(e.start.split('-').toString())
-        const end = new Date(e.end.split('-').toString())
-        svg.append('rect')
-        .attr('transform', `translate(${this.x(start)},${margin.top})`)
-        .attr('width', this.x(end)-this.x(start))
-        .attr('height', height-margin.top-margin.bottom)
-        .attr('fill','green')
-        .attr('fill-opacity',.07)
-      })
 
       const legend = svg.append('g')
-        .attr('transform', `translate(${width/2+margin.left/2},${height+margin.top+margin.bottom})`)
+        .attr('transform', `translate(${width/2+margin.left/2},${height+margin.top+margin.bottom})`);
 
-      legend.append('rect')
-        .attr('width', 40)
-        .attr('height', 20)
-        .attr('fill','red')
-        .attr('fill-opacity',.07)
-        .attr('stroke','darkgrey')
-        .attr('x',-540)
-        .attr('y',-15)
-      legend.append('text')
-        .attr('x',-490)
-        .text('6 Nations cups')
+      [ [wrcs,'blue',-370,'World cups'],
+        [automn,'orange',110,`Coupe d'automne des nations`],
+        [sixNations,'red',-540,'6 Nations cups'],
+        [rcs,'green',-210,'Tri Nations / Rugby Championships'],
+      ].forEach(([serie,color,xpos,title]) => {
+        serie.forEach(e => {
+          const start = new Date(e.start.split('-').toString())
+          const end = new Date(e.end.split('-').toString())
+          svg.append('rect')
+          .attr('transform', `translate(${this.x(start)},${margin.top})`)
+          .attr('width', this.x(end)-this.x(start))
+          .attr('height', height-margin.top-margin.bottom)
+          .attr('fill',color)
+          .attr('fill-opacity',.07)
+        })
 
-      legend.append('rect')
-        .attr('width', 40)
-        .attr('height', 20)
-        .attr('fill','blue')
-        .attr('fill-opacity',.07)
-        .attr('stroke','darkgrey')
-        .attr('x',-370)
-        .attr('y',-15)
-      legend.append('text')
-        .attr('x',-320)
-        .text('World cups')
+        legend.append('rect')
+          .attr('width', 40)
+          .attr('height', 20)
+          .attr('fill',color)
+          .attr('fill-opacity',.07)
+          .attr('stroke','darkgrey')
+          .attr('x',xpos)
+          .attr('y',-15)
+        legend.append('text')
+          .attr('x',xpos+50)
+          .text(title)
+      })
 
-      legend.append('rect')
-        .attr('width', 40)
-        .attr('height', 20)
-        .attr('fill','green')
-        .attr('fill-opacity',.07)
-        .attr('stroke','darkgrey')
-        .attr('x',-210)
-        .attr('y',-15)
-      legend.append('text')
-        .attr('x',-160)
-        .text('Tri Nations / Rugby Championships')
-
-      legend.append('rect')
-        .attr('width', 40)
-        .attr('height', 20)
-        .attr('fill','orange')
-        .attr('fill-opacity',.07)
-        .attr('stroke','darkgrey')
-        .attr('x',110)
-        .attr('y',-15)
-      legend.append('text')
-        .attr('x',160)
-        .text(`Coupe d'automne des nations`)
-
-      let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))]
-      if (this.type === 'pos') yDomain = yDomain.reverse() 
+      let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))];
+      if (this.type === 'pos') yDomain = yDomain.reverse();
       this.y = d3.scaleLinear()
         .domain(yDomain).nice()
-        .range([height - margin.bottom, margin.top])
+        .range([height - margin.bottom, margin.top]);
 
       const xAxis = g => g
         .attr('transform', `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(this.x).ticks(width / 80).tickSizeOuter(0))
+        .call(d3.axisBottom(this.x).ticks(width / 80).tickSizeOuter(0));
       const xAxisGrid = g => g
         .attr('transform', `translate(0,${height - margin.bottom})`)
         .attr('stroke-opacity', .2)
-        .call(d3.axisBottom(this.x).ticks(height / 40).tickFormat('').tickSizeInner(-height+margin.top+margin.bottom))
+        .call(d3.axisBottom(this.x).ticks(height / 40).tickFormat('').tickSizeInner(-height+margin.top+margin.bottom));
 
       const yAxis = g => g
         .attr('transform', `translate(${margin.left},0)`)
-        .call(d3.axisLeft(this.y))
+        .call(d3.axisLeft(this.y));
       const yAxisGrid = g => g
         .attr('transform', `translate(${margin.left},0)`)
         .attr('stroke-opacity', .2)
-        .call(d3.axisLeft(this.y).ticks(height / 40).tickFormat('').tickSizeInner(-width+margin.right+margin.left))
+        .call(d3.axisLeft(this.y).ticks(height / 40).tickFormat('').tickSizeInner(-width+margin.right+margin.left));
 
       svg.append('g')
-         .call(xAxis)
+         .call(xAxis);
       svg.append('g')
-         .call(xAxisGrid)
+         .call(xAxisGrid);
 
       const yAxisEl = svg.append('g')
-         .call(yAxis)
+         .call(yAxis);
 
       const yAxisGridEl = svg.append('g')
-         .call(yAxisGrid)
+         .call(yAxisGrid);
 
       const line = d3.line()
         .defined(d => !isNaN(d))
         .x((d, i) => this.x(this.data.dates[i]))
-        .y(d => this.y(d))
+        .y(d => this.y(d));
 
       const path = svg.append('g')
           .attr('fill', 'none')
           .attr('stroke-width', 1.5)
           .attr('stroke-linejoin', 'round')
-          .attr('stroke-linecap', 'round')
+          .attr('stroke-linecap', 'round');
       const pathes = path.selectAll('path')
         .data(this.data.series)
           .join('path')
@@ -210,7 +148,7 @@ export default {
               // )
               
 
-      svg.call(this.hover, pathes)
+      svg.call(this.hover, pathes);
 
       return {
         node : svg.node(),
@@ -309,10 +247,8 @@ export default {
         legend.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts}`)[i].toString())
         back.attr('width', () => 2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))
         back.attr('height', () => 1.5*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))
-        // back.attr('y', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().y))-legendMargin*.5)
-        // back.attr('x', () => d3.min([...legend.selectAll('text')].map(t=>t.getBBox().x))-legendMargin)
-        back.attr('x', () => (-2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))/2)
-        back.attr('y', () => (-1.5*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))/2)
+        back.attr('x', () => -(2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))/2)
+        back.attr('y', () => -(2*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height))))
       }
 
       function entered() {
