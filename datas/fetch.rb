@@ -22,7 +22,7 @@ global_teams = JSON.parse('{}')
 		if backup[week]
 			puts "get #{week} from local"
 		else
-			json_file = URI.open("https://cmsapi.pulselive.com/rugby/rankings/mru?date=#{week}&client=pulse")
+			json_file = URI.open("https://cmsapi.pulselive.com/rugby/rankings/mru?date=#{week}")
 			backup[week] = JSON.parse(File.read(json_file))['entries']
 			puts "get #{week} from remote"
 		end
@@ -51,6 +51,7 @@ global_teams = JSON.parse('{}')
 				team.delete('id')
 				teams[team_id] = team
 			else
+				teams[team_id] = team
 				puts "team #{team['id']} (#{team['name']}) already exists"
 			end
 
