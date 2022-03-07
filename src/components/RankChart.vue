@@ -282,12 +282,11 @@ export default {
 } 
 
 </script>
-<style>
-  p.chart {
-    margin: 0 200px;
-    height: calc(100vh - 200px);
-  }
-  .tick text {
-    font-size: 16px;
-  }
+<style lang="sass">
+  p.chart
+    margin : 0 200px
+    height : calc(100vh - 200px)
+
+  .tick text
+    font-size : 16px
 </style>

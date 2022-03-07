@@ -10,151 +10,47 @@ import Aside from './components/Aside.vue'
 </script>
 
 <script>
-	export default {
-		methods: {
-			updateIds(ids) {
-				this.teams = ids
-			},
-			updateType(type) {
-				this.type = type
-			}
-		},
-		data() {
+  export default {
+    methods: {
+      updateIds(ids) {
+        this.teams = ids
+      },
+      updateType(type) {
+        this.type = type
+      }
+    },
+    data() {
       return {
         teams: [],
         type: 'pos'
       }
     },
-	}
+  }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 20px;
-}
-.teams [data-id]:before {
-	content: '';
-	background: url(./assets/tLogo20x-sprite@x2.new.png) no-repeat;
-	background-size: 318px 299px;
-  width: 20px;
-	height: 25px;
-	display: inline-block;
-	margin-right: 5px;
-	vertical-align: middle;
-}
-.teams li[data-id="39"]:before {  background-position: -200px -224px; }
-.teams li[data-id="37"]:before {  background-position: -238px -100px; }
-.teams li[data-id="34"]:before {  background-position: -158px -75px; }
-.teams li[data-id="36"]:before {  background-position: -198px -125px; }
-.teams li[data-id="38"]:before {  background-position: 0px -49px; }
-.teams li[data-id="42"]:before {  background-position: -100px -149px; }
-.teams li[data-id="35"]:before {  background-position: -258px -75px; }
-.teams li[data-id="40"]:before {  background-position: -218px -100px; }
-.teams li[data-id="33"]:before {  background-position: -298px -100px; }
-.teams li[data-id="49"]:before {  background-position: -80px -174px; }
-.teams li[data-id="46"]:before {  background-position: -20px -149px; }
-.teams li[data-id="720"]:before {  background-position: -140px -149px; }
-.teams li[data-id="45"]:before {  background-position: -258px -50px; }
-.teams li[data-id="41"]:before {  background-position: -40px -174px; }
-.teams li[data-id="47"]:before {  background-position: -200px -249px; }
-.teams li[data-id="52"]:before {  background-position: -180px -224px; }
-.teams li[data-id="68"]:before {  background-position: -278px -175px; }
-.teams li[data-id="51"]:before {  background-position: -278px -200px; }
-.teams li[data-id="44"]:before {  background-position: -100px -224px; }
-.teams li[data-id="43"]:before {  background-position: -158px -100px; }
-.teams li[data-id="756"]:before {  background-position: -220px -224px; }
-.teams li[data-id="50"]:before {  background-position: -60px -99px; }
-.teams li[data-id="725"]:before {  background-position: -198px 0px; }
-.teams li[data-id="58"]:before {  background-position: -180px -199px; }
-.teams li[data-id="64"]:before {  background-position: -200px -199px; }
-.teams li[data-id="708"]:before {  background-position: -100px -99px; }
-.teams li[data-id="699"]:before {  background-position: -98px -25px; }
-.teams li[data-id="703"]:before {  background-position: -118px 0px; }
-.teams li[data-id="753"]:before {  background-position: -80px -224px; }
-.teams li[data-id="721"]:before {  background-position: -178px 0px; }
-.teams li[data-id="736"]:before {  background-position: -160px -174px; }
-.teams li[data-id="57"]:before {  background-position: -298px -150px; }
-.teams li[data-id="770"]:before {  background-position: -80px -249px; }
-.teams li[data-id="711"]:before {  background-position: -40px -124px; }
-.teams li[data-id="735"]:before {  background-position: -120px -174px; }
-.teams li[data-id="777"]:before {  background-position: -278px -150px; }
-.teams li[data-id="714"]:before {  background-position: -158px 0px; }
-.teams li[data-id="1030"]:before {  background-position: -80px -199px; }
-.teams li[data-id="775"]:before {  background-position: -278px -50px; }
-.teams li[data-id="681"]:before {  background-position: -138px -50px; }
-.teams li[data-id="2537"]:before {  background-position: -20px -224px; }
-.teams li[data-id="1247"]:before {  background-position: -40px -199px; }
-.teams li[data-id="738"]:before {  background-position: -218px -50px; }
-.teams li[data-id="759"]:before {  background-position: -258px -100px; }
-.teams li[data-id="713"]:before {  background-position: -80px -124px; }
-.teams li[data-id="740"]:before {  background-position: -20px -23px; }
-.teams li[data-id="751"]:before {  background-position: -238px -175px; }
-.teams li[data-id="766"]:before {  background-position: -40px -249px; }
-.teams li[data-id="745"]:before {  background-position: -218px -125px; }
-.teams li[data-id="741"]:before {  background-position: -218px -150px; }
-.teams li[data-id="776"]:before {  background-position: -278px -125px; }
-.teams li[data-id="769"]:before {  background-position: -140px -249px; }
-.teams li[data-id="774"]:before {  background-position: -278px -25px; }
-.teams li[data-id="712"]:before {  background-position: -20px -124px; }
-.teams li[data-id="760"]:before {  background-position: -258px -125px; }
-.teams li[data-id="707"]:before {  background-position: -80px -99px; }
-.teams li[data-id="723"]:before {  background-position: -178px -100px; }
-.teams li[data-id="739"]:before {  background-position: -218px -75px; }
-.teams li[data-id="743"]:before {  background-position: -20px -199px; }
-.teams li[data-id="729"]:before {  background-position: -20px -174px; }
-.teams li[data-id="3223"]:before {  background-position: -278px -100px; }
-.teams li[data-id="734"]:before {  background-position: -100px -174px; }
-.teams li[data-id="737"]:before {  background-position: -218px 0px; }
-.teams li[data-id="726"]:before {  background-position: -198px -25px; }
-.teams li[data-id="710"]:before {  background-position: -278px 0px; }
-.teams li[data-id="732"]:before {  background-position: -60px -174px; }
-.teams li[data-id="700"]:before {  background-position: 0px -74px; }
-.teams li[data-id="784"]:before {  background-position: -298px -125px; }
-.teams li[data-id="1031"]:before {  background-position: -238px -25px; }
-.teams li[data-id="704"]:before {  background-position: 0px -99px; }
-.teams li[data-id="715"]:before {  background-position: -158px -25px; }
-.teams li[data-id="761"]:before {  background-position: -258px -200px; }
-.teams li[data-id="722"]:before {  background-position: -178px -75px; }
-.teams li[data-id="752"]:before {  background-position: 0px -224px; }
-.teams li[data-id="772"]:before {  background-position: -220px -249px; }
-.teams li[data-id="702"]:before {  background-position: -80px -74px; }
-.teams li[data-id="781"]:before {  background-position: -298px -25px; }
-.teams li[data-id="692"]:before {  background-position: 0px -149px; }
-.teams li[data-id="2476"]:before {  background-position: -298px -50px; }
-.teams li[data-id="709"]:before {  background-position: -138px -25px; }
-.teams li[data-id="698"]:before {  background-position: -78px -25px; }
-.teams li[data-id="701"]:before {  background-position: -40px -74px; }
-.teams li[data-id="750"]:before {  background-position: -60px -224px; }
-.teams li[data-id="727"]:before {  background-position: -198px -100px; }
-.teams li[data-id="2382"]:before {  background-position: -178px -25px; }
-.teams li[data-id="696"]:before {  background-position: -20px -49px; }
-.teams li[data-id="1029"]:before {  background-position: -60px -149px; }
-.teams li[data-id="2340"]:before {  background-position: -20px -249px; }
-.teams li[data-id="2861"]:before {  background-position: -278px -225px; }
-.teams li[data-id="3200"]:before {  background-position: -298px -175px; }
-.teams li[data-id="2389"]:before {  background-position: -298px -175px; }
-.teams li[data-id="2857"]:before {  background-position: -140px -199px; }
-.teams li[data-id="2744"]:before {  background-position: 0px -174px; }
-.teams li[data-id="1784"]:before {  background-position: -180px -174px; }
-.teams li[data-id="2397"]:before {  background-position: -238px -125px; }
-.teams li[data-id="2387"]:before {  background-position: -258px 0px; }
-.teams li[data-id="2585"]:before {  background-position: -60px -124px; }
-.teams li[data-id="748"]:before {  background-position: -238px -50px; }
-.teams li[data-id="771"]:before {  background-position: -120px -224px; }
-.teams li[data-id="697"]:before {  background-position: -78px 0px; }
-.teams li[data-id="749"]:before {  background-position: -238px -75px; }
-.teams li[data-id="2386"]:before {  background-position: -98px 0px; }
-.teams li[data-id="768"]:before {  background-position: -160px -249px; }
-.teams li[data-id="762"]:before {  background-position: 0px -249px; }
-.teams li[data-id="705"]:before {  background-position: 0px -124px; }
-.teams li[data-id="2576"]:before {  background-position: -198px -75px; }
-.teams li[data-id="744"]:before {  background-position: -120px -199px; }
-.teams li[data-id="2529"]:before {  background-position: -178px -50px; }
-.teams li[data-id="780"]:before {  background-position: -298px 0px; }
-.teams li[data-id="3674"]:before {  background-position: -60px -249px; }
+<style lang="sass">
+  #app
+    font-family             : Avenir, Helvetica, Arial, sans-serif
+    -webkit-font-smoothing  : antialiased
+    -moz-osx-font-smoothing : grayscale
+    text-align              : center
+    color                   : #2c3e50
+    margin-top              : 20px
+
+    .teams
+      [data-id]:before
+        content             : ''
+        background          : url(./assets/tLogo20x-sprite@x2.new.png) no-repeat
+        background-size     : 318px 299px
+        width               : 20px
+        height              : 25px
+        display             : inline-block
+        margin-right        : 5px
+        vertical-align      : middle
+
+      $positions: 39 -200px -224px, 37 -238px -100px, 34 -158px -75px, 36 -198px -125px, 38 0px -49px, 42 -100px -149px, 35 -258px -75px, 40 -218px -100px, 33 -298px -100px, 49 -80px -174px, 46 -20px -149px, 720 -140px -149px, 45 -258px -50px, 41 -40px -174px, 47 -200px -249px, 52 -180px -224px, 68 -278px -175px, 51 -278px -200px, 44 -100px -224px, 43 -158px -100px, 756 -220px -224px, 50 -60px -99px, 725 -198px 0px, 58 -180px -199px, 64 -200px -199px, 708 -100px -99px, 699 -98px -25px, 703 -118px 0px, 753 -80px -224px, 721 -178px 0px, 736 -160px -174px, 57 -298px -150px, 770 -80px -249px, 711 -40px -124px, 735 -120px -174px, 777 -278px -150px, 714 -158px 0px, 1030 -80px -199px, 775 -278px -50px, 681 -138px -50px, 2537 -20px -224px, 1247 -40px -199px, 738 -218px -50px, 759 -258px -100px, 713 -80px -124px, 740 -20px -23px, 751 -238px -175px, 766 -40px -249px, 745 -218px -125px, 741 -218px -150px, 776 -278px -125px, 769 -140px -249px, 774 -278px -25px, 712 -20px -124px, 760 -258px -125px, 707 -80px -99px, 723 -178px -100px, 739 -218px -75px, 743 -20px -199px, 729 -20px -174px, 3223 -278px -100px, 734 -100px -174px, 737 -218px 0px, 726 -198px -25px, 710 -278px 0px, 732 -60px -174px, 700 0px -74px, 784 -298px -125px, 1031 -238px -25px, 704 0px -99px, 715 -158px -25px, 761 -258px -200px, 722 -178px -75px, 752 0px -224px, 772 -220px -249px, 702 -80px -74px, 781 -298px -25px, 692 0px -149px, 2476 -298px -50px, 709 -138px -25px, 698 -78px -25px, 701 -40px -74px, 750 -60px -224px, 727 -198px -100px, 2382 -178px -25px, 696 -20px -49px, 1029 -60px -149px, 2340 -20px -249px, 2861 -278px -225px, 3200 -298px -175px, 2389 -298px -175px, 2857 -140px -199px, 2744 0px -174px, 1784 -180px -174px, 2397 -238px -125px, 2387 -258px 0px, 2585 -60px -124px, 748 -238px -50px, 771 -120px -224px, 697 -78px 0px, 749 -238px -75px, 2386 -98px 0px, 768 -160px -249px, 762 0px -249px, 705 0px -124px, 2576 -198px -75px, 744 -120px -199px, 2529 -178px -50px, 780 -298px 0px, 3674 -60px -249px
+
+      @each $id, $posx, $posy in $positions
+        [data-id="#{$id}"]:before
+          background-position : $posx $posy
 </style>
