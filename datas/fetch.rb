@@ -38,8 +38,15 @@ global_teams = JSON.parse('{}')
 
 			rank['teamId'] = team['id']
 
-			global_teams[rank['teamId']] = JSON.parse('{}') unless global_teams[rank['teamId']]
-			global_teams[rank['teamId']][week] = rank_for_team unless global_teams[rank['teamId']][week]
+			puts "#{week} #{team}" 
+			if !rank['teamId'].nil?
+				if (global_teams[rank['teamId']].nil?)
+					global_teams[rank['teamId']] = JSON.parse('{}')
+				end
+				if (global_teams[rank['teamId']][week].nil?)
+					global_teams[rank['teamId']][week] = rank_for_team
+				end
+			end
 
 			# si le fichier teams ne connait pas cette équipe
 			if !teams[team['id']]
@@ -65,7 +72,6 @@ global_teams = JSON.parse('{}')
 		puts "#{week} already exists"
 	end
 end
-
 
 global_teams.each do |key, value|
 	File.open("./teams/#{key}.min.json",'w') do |f|
