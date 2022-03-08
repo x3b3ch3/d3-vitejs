@@ -10,9 +10,9 @@
     <h1>Select teams (10 max)</h1>
     <ul class="teams">
       <li :key="key" 
-          v-bind:data-id="key"
-          v-bind:class="{'active' : key === '42' || key === '37' }"
-          v-for="(value, key, index) in teams" @click="teamsLiClick">{{ value.name }} ({{ value.abbreviation }})</li>
+          v-bind:data-id="value[0]"
+          v-bind:class="{'active' : value[0] === '42' || value[0] === '37' }"
+          v-for="(value, key, index) in sortedTeams" @click="teamsLiClick">{{ value[1].pos }}. {{ value[1].name }} ({{ value[1].abbreviation }})</li>
     </ul>
   </aside>
 </template>
@@ -30,6 +30,11 @@ export default {
     this.emitIds()
     this.emitType()
     setTimeout(this.close, 2000)
+  },
+  computed: {
+    sortedTeams: function () {
+      return Object.entries(teams).sort((a,b) => a[1].pos - b[1].pos); // Do your custom sorting here
+    }
   },
   methods: {
     typesLiClick(event) {

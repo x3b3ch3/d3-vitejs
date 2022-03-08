@@ -244,7 +244,7 @@ export default {
         dot.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
         legend.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
         legend.select('text.name').text(s.name);
-        legend.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts}`)[i].toString())
+        legend.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts.toPrecision(4)}`)[i].toString())
         back.attr('width', () => 2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))
         back.attr('height', () => 1.5*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))
         back.attr('x', () => -(2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))/2)
@@ -284,8 +284,8 @@ export default {
 </script>
 <style lang="sass">
   p.chart
-    margin : 0 200px
-    height : calc(100vh - 200px)
+    margin : 0 100px
+    height : calc(100vh - 100px)
 
   .tick text
     font-size : 16px
