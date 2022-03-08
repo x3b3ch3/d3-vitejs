@@ -5,7 +5,6 @@ require 'active_support/core_ext/date_time/conversions'
 require 'json'
 
 start_date = DateTime.new(2003,10,13)
-# end_date = DateTime.new(2003,11,13)
 end_date = DateTime.now
 backup = JSON.parse(File.read('./datas.min.json'))
 ranks = JSON.parse('{}')
@@ -42,18 +41,17 @@ global_teams = JSON.parse('{}')
 			global_teams[rank['teamId']] = JSON.parse('{}') unless global_teams[rank['teamId']]
 			global_teams[rank['teamId']][week] = rank_for_team unless global_teams[rank['teamId']][week]
 
-
 			# si le fichier teams ne connait pas cette équipe
 			if !teams[team['id']]
 				team_id = team['id']
 				team.delete('altId')
 				team.delete('annotations')
 				team.delete('id')
-				teams[team_id] = team
 			else
-				teams[team_id] = team
 				puts "team #{team['id']} (#{team['name']}) already exists"
 			end
+
+			teams[team_id] = team
 
 			# supression des données superflues
 			rank.delete('team')
@@ -68,6 +66,7 @@ global_teams = JSON.parse('{}')
 	end
 end
 
+
 global_teams.each do |key, value|
 	File.open("./teams/#{key}.min.json",'w') do |f|
 	  f.write value.to_json
@@ -75,6 +74,16 @@ global_teams.each do |key, value|
 end 
 
 File.open('./teams.min.json','w') do |f|
+	# sort teams with most recent ranking
+	# out = JSON.parse('{}')
+	last_week = backup.each_value.reverse_each.next rescue StopIteration
+	last_week.each do |t|
+		team = teams.select do |key, hash|
+			!key.nil? && hash['abbreviation'] == t['team']['abbreviation']
+		end
+		teams[team.keys[0]]['pos'] = t['pos']
+	end
+
   f.write teams.to_json
 end
 
