@@ -92,55 +92,55 @@ export default {
 
 <style lang="sass" scoped>
   aside 
-    top: 0
-    height: 100vh
-    padding: 10px 0
-    position: fixed
-    right: 0
-    background-color: rgba(255,255,255,.9)
-    border-left: 1px solid grey
-    transition: right 1s
-    box-shadow: -1px 0 10px rgba(0,0,0,.2)
+    top               : 0
+    height            : 100vh
+    padding           : 10px 0
+    position          : fixed
+    right             : 0
+    background-color  : rgba(255,255,255,.9)
+    border-left       : 1px solid grey
+    transition        : right 1s
+    box-shadow        : -1px 0 10px rgba(0,0,0,.2)
   
     &.closed 
-      right: -240px
+      right           : -240px
   
   h1 
-    text-transform: uppercase
-    color: darkgrey
-    font-size: 12pt
-    border-bottom: 1px solid darkgrey
-    text-align: left
-    padding-left: 20px
+    text-transform    : uppercase
+    color             : darkgrey
+    font-size         : 12pt
+    border-bottom     : 1px solid darkgrey
+    text-align        : left
+    padding-left      : 20px
   
   ul
-    list-style: none
+    list-style        : none
     &.teams 
-      height: calc(100% - 160px)
-      overflow: auto
+      height          : calc(100% - 160px)
+      overflow        : auto
   
     &.types
-      text-align: left
+      text-align      : left
   
       > li 
-        display: inline-block
+        display       : inline-block
       
         &:last-of-type 
-          margin-left: 10px
+          margin-left : 10px
   
     li 
-      text-align: left
-      color: grey
+      text-align      : left
+      color           : grey
     
       &.active 
-        color: blue
+        color         : blue
   
   button.chevron 
-    position : absolute
-    top : 10px
-    left: 10px
-    height: 10px
-    width: 10px
+    position          : absolute
+    top               : 10px
+    left              : 10px
+    height            : 10px
+    width             : 10px
   
 </style>
 
