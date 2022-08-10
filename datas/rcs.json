@@ -88,5 +88,10 @@
     "name":"The Rugby Championship 2021",
     "start": "2021-08-14",
     "end": "2021-10-02"
+  },
+  {
+    "name":"The Rugby Championship 2022",
+    "start": "2022-08-06",
+    "end": "2022-09-24"
   }
 ]
