@@ -12,7 +12,7 @@
       <li :key="key" 
           v-bind:data-id="value[0]"
           v-bind:class="{'active' : value[0] === '42' || value[0] === '37' }"
-          v-for="(value, key, index) in sortedTeams" @click="teamsLiClick">{{ value[1].pos }}. {{ value[1].name }} ({{ value[1].abbreviation }})</li>
+          v-for="(value, key, index) in sortedTeams" @click="teamsLiClick">{{ value[1].pos }}. {{ value[1].name }} ({{ value[1].abbreviation }}) - {{ Math.round(100*value[1].pts)/100 }}</li>
     </ul>
   </aside>
 </template>
@@ -80,10 +80,10 @@ export default {
     return {
       types: [{
         name:'Position',
-        field: 'pos'
+        field:'pos'
       },{
         name:'Points',
-        field: 'pts'
+        field:'pts'
       }]
     }
   }
@@ -103,7 +103,7 @@ export default {
     box-shadow        : -1px 0 10px rgba(0,0,0,.2)
   
     &.closed 
-      right           : -240px
+      right           : -310px
   
   h1 
     text-transform    : uppercase

@@ -88,6 +88,7 @@ File.open('./teams.min.json','w') do |f|
 			!key.nil? && hash['abbreviation'] == t['team']['abbreviation']
 		end
 		teams[team.keys[0]]['pos'] = t['pos']
+		teams[team.keys[0]]['pts'] = t['pts']
 	end
 
   f.write teams.to_json
