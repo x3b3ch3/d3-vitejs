@@ -18,13 +18,13 @@ global_teams = JSON.parse('{}')
 	# si la semaine existe déjà dans le fichier rank
 	if !ranks[week]
 		# si la semaine est dejà dans le backup, sinon on fetche
-		if backup[week]
-			puts "get #{week} from local"
-		else
+		# if backup[week]
+		# 	puts "get #{week} from local"
+		# else
 			json_file = URI.open("https://cmsapi.pulselive.com/rugby/rankings/mru?date=#{week}")
 			backup[week] = JSON.parse(File.read(json_file))['entries']
 			puts "get #{week} from remote"
-		end
+		# end
 
 		# on laisse le backup intact et on allège de fichier rank des infos superflues
 		ranks[week] = backup[week].map(&:clone)
