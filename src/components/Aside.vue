@@ -61,10 +61,16 @@ export default {
       this.emitIds()
     },
     emitIds(event) {
-      this.$emit('changed-team-ids', this.lis.map(e => {
-        const id = e.dataset.id
-        return Object.assign({id},teams[id])
-      }))
+      const datas = [];
+      for (const li of this.lis) {
+        const id = li.dataset.id
+        datas[id] = Object.assign({id},teams[id])
+      }
+      this.$emit('changed-team-ids', datas)
+      // this.$emit('changed-team-ids', this.lis.map(e => {
+      //   const id = e.dataset.id
+      //   return Object.assign({id},teams[id])
+      // }))
     },
     toggle(flag) {
       this.$el.classList.toggle('closed',flag)

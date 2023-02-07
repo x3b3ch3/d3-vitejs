@@ -19,13 +19,13 @@ export default {
     fetch() {
       const promises = [];
       let dates = [];
-      const topTeams = this.allteams.map(team => {
-        const uid = team.id
-        const promise = d3.json(`../datas/teams/${uid}.min.json`)
+      const topTeams = this.allteams.map((team, id) => {
+        id = team.id
+        const promise = d3.json(`../datas/teams/${id}.min.json`)
                           .then(datas => {
-          if (!dates.length) dates = Object.keys(datas).map(d=>new Date(d))
-          Object.assign(topTeams.find(({id}) => id == uid), {values:Object.values(datas)})
-        })
+            if (!dates.length) dates = Object.keys(datas).map(d=>new Date(d))
+            return Object.assign(team, {values:Object.values(datas)})
+          })
         promises.push(promise)
         return team
       })
@@ -85,7 +85,10 @@ export default {
           .text(title)
       })
 
-      let yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))];
+      const filteredSeries = this.data.series.filter(s => s)
+      const min = d3.min(filteredSeries, d => d3.min(d.values.map(v => v[this.type])))
+      const max = d3.max(filteredSeries, d => d3.max(d.values.map(v => v[this.type])))
+      let yDomain = [min, max]
       if (this.type === 'pos') yDomain = yDomain.reverse();
       this.y = d3.scaleLinear()
         .domain(yDomain).nice()
@@ -124,67 +127,94 @@ export default {
         .y(d => this.y(d));
 
       const path = svg.append('g')
-          .attr('fill', 'none')
-          .attr('stroke-width', 1.5)
-          .attr('stroke-linejoin', 'round')
-          .attr('stroke-linecap', 'round');
-      const pathes = path.selectAll('path')
-        .data(this.data.series)
-          .join('path')
-            .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
-            .style('mix-blend-mode', 'multiply')
-            .attr('d', d => line(d.values.map(v => v[this.type])))
-              // .join(
-              //   enter => {
-              //     enter.append('path').attr('stroke', d => colors[d.abbreviation] || 'steelblue')
-              //       .style('mix-blend-mode', 'multiply')
-              //       .attr('d', d => line(d.values.map(v => v[this.type])))
-              //   },
-              //   update =>  update
-              //     .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
-              //     .style('mix-blend-mode', 'multiply')
-              //     .attr('d', d => line(d.values.map(v => v[this.type]))),
-              //   exit => exit.remove()
-              // )
-              
+        .attr('fill', 'none')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round');
 
-      svg.call(this.hover, pathes);
+      const popin = svg.append('g')
+        .attr('class', 'popin')
+        .attr('display', 'none');
 
-      return {
-        node : svg.node(),
-        update : () => {
-          yDomain = [d3.min(this.data.series, d => d3.min(d.values.map(v => v[this.type]))), d3.max(this.data.series, d => d3.max(d.values.map(v => v[this.type])))]
+      popin.append('circle')
+        .attr('r', 2.5);
+
+      const front = popin.append('g')
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', 14)
+        .attr('text-anchor', 'middle')
+
+      const back = front.append('rect')
+        .attr('fill', '#FFF')
+        .attr('stroke', '#000')
+        .attr('stroke-opacity', .3)
+        .attr('fill-opacity', .7)
+
+      front.append('text')
+        .attr('class', 'date')
+        .attr('y', -60);
+
+      front.append('text')
+        .attr('class', 'name')
+        .attr('y', -40);
+
+      front.append('text')
+        .attr('class', 'score')
+        .attr('y', -20);
+
+      const update = () => {
+          const min = d3.min(filteredSeries, d => d3.min(d.values.map(v => v[this.type])))
+          const max = d3.max(filteredSeries, d => d3.max(d.values.map(v => v[this.type])))
+          yDomain = [min, max]
           if (this.type === 'pos') yDomain = yDomain.reverse() 
           this.y = d3.scaleLinear()
             .domain(yDomain).nice()
             .range([height - margin.bottom, margin.top])
 
-          yAxisEl.transition().call(yAxis)
-          yAxisGridEl.transition().call(yAxisGrid)
+          yAxisEl
+            .transition().duration(1000)
+            .call(yAxis)
+          yAxisGridEl
+            .transition().duration(1000)
+            .call(yAxisGrid)
 
           path.selectAll('path')
               .data(this.data.series)
               .join(
                 enter => {
-                  const tpath = enter.append('path')
-                  // return tpath.transition().on('end', () => {
-                    tpath.attr('stroke', d => colors[d.abbreviation] || 'steelblue')
-                      .style('mix-blend-mode', 'multiply')
-                      .attr('d', d => line(d.values.map(v => v[this.type])))
-                  // })
+                  return enter.append('path')
+                  .attr('stroke', d => colors[(d || {}).abbreviation] || 'steelblue')
+                  .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
+                  .attr('stroke-dasharray', (d,id,pathes) => pathes[id].getTotalLength() + ' ' + pathes[id].getTotalLength())
+                  .attr('stroke-dashoffset', (d,id,pathes) => pathes[id].getTotalLength())
+                  .call(enter => enter.transition().duration(1000)
+                      .attr('stroke-dashoffset', 0)
+                  )
                 },
-                update =>  update.transition()
-                  .attr('stroke', d => colors[d.abbreviation] || 'steelblue')
-                  .style('mix-blend-mode', 'multiply')
-                  .attr('d', d => line(d.values.map(v => v[this.type])))
-                  .on('end', () => {
-                    svg.call(this.hover, path.selectAll('path'))
-                  }),
-                exit => exit.remove()
+                update =>  update
+                  .call(update => update
+                    .attr('stroke-dasharray', (d,id,pathes) => pathes[id].getTotalLength() + ' ' + pathes[id].getTotalLength())
+                    .attr('stroke-dashoffset', 0)
+                    .transition().duration(1000)
+                    .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
+                    .on('end', () => {
+                      svg.call(this.hover, path.selectAll('path'))
+                    })
+                ),
+                exit => exit
+                  .transition().duration(1000)
+                  .attr('stroke-dashoffset', (d,id,pathes) => pathes[id].getTotalLength())
+                  .on('end', () => exit.remove())
               )
-
-          
+              .attr('stroke', d => colors[(d || {}).abbreviation] || 'steelblue')
+              .style('mix-blend-mode', 'multiply')
         }
+      update();
+      svg.call(this.hover, path.selectAll('path'))
+
+      return {
+        node : svg.node(),
+        update
       }
     },
     hover(svg, path) {
@@ -198,40 +228,14 @@ export default {
         .on('mouseenter', entered)
         .on('mouseleave', left);
 
-      const dot = svg.append('g')
-        .attr('display', 'none');
-
-      dot.append('circle')
-        .attr('r', 2.5);
-
-      const legend = dot.append('g')
-        .attr('font-family', 'sans-serif')
-        .attr('font-size', 14)
-        .attr('text-anchor', 'middle')
-
-      const back = legend.append('rect')
-        .attr('fill', '#FFF')
-        .attr('stroke', '#000')
-        .attr('stroke-opacity', .3)
-        .attr('fill-opacity', .7)
-
-      legend.append('text')
-        .attr('class', 'date')
-        .attr('y', -60);
-
-      legend.append('text')
-        .attr('class', 'name')
-        .attr('y', -40);
-
-      legend.append('text')
-        .attr('class', 'score')
-        .attr('y', -20);
-
       const x = this.x;
       const y = this.y;
       const data = this.data;
       const prop = this.type;
-      const legendMargin = 20;
+      const frontMargin = 20;
+      const popin = svg.select('g.popin');
+      const front = popin.select('g');
+      const back = front.select('rect');
 
       function moved(event) {
         event.preventDefault();
@@ -239,30 +243,30 @@ export default {
         const xm = x.invert(pointer[0]);
         const ym = y.invert(pointer[1]);
         const i = d3.bisectCenter(data.dates, xm);
-        const s = d3.least(data.series, d => Math.abs(d.values.map(v => v[prop])[i] - ym));
-        path.style('stroke', d => d === s ? null : '#bbb').filter(d => d === s).raise();
-        dot.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
-        legend.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
-        legend.select('text.name').text(s.name);
-        legend.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts.toPrecision(4)}`)[i].toString())
-        back.attr('width', () => 2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))
-        back.attr('height', () => 1.5*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height)))
-        back.attr('x', () => -(2*legendMargin+d3.max([...legend.selectAll('text')].map(t=>t.getBBox().width)))/2)
-        back.attr('y', () => -(2*legendMargin+d3.sum([...legend.selectAll('text')].map(t=>t.getBBox().height))))
+        const s = d3.least(data.series.filter(s => s), d => Math.abs(d.values.map(v => v[prop])[i] - ym));
+        path.style('stroke', d => d === s ? colors[d.abbreviation]  : '#bbb').filter(d => d === s).raise();
+        popin.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
+        front.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
+        front.select('text.name').text(s.name);
+        front.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts.toPrecision(4)}`)[i].toString())
+        back.attr('width', () => 2*frontMargin+d3.max([...front.selectAll('text')].map(t=>t.getBBox().width)))
+        back.attr('height', () => 1.5*frontMargin+d3.sum([...front.selectAll('text')].map(t=>t.getBBox().height)))
+        back.attr('x', () => -(2*frontMargin+d3.max([...front.selectAll('text')].map(t=>t.getBBox().width)))/2)
+        back.attr('y', () => -(2*frontMargin+d3.sum([...front.selectAll('text')].map(t=>t.getBBox().height))))
       }
 
       function entered() {
         path
           .style('mix-blend-mode', null)
           .style('stroke', '#bbb');
-        dot.attr('display', null)
+        popin.attr('display', null)
       }
 
       function left() {
         path
           .style('mix-blend-mode', 'multiply')
           .style('stroke', null);
-        dot.attr('display', 'none')
+        popin.attr('display', 'none')
       }
     }
   },

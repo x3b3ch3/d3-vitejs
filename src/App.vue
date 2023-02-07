@@ -2,7 +2,7 @@
   <img alt="Vue logo" src="./assets/mruLogo.svg"/>
   <Aside top="10" @changed-team-ids="updateIds" @changed-type="updateType" />
   <RankChart v-bind:teams="teams" v-bind:type="type" />
-  <Simulator />
+  <Simulator v-if="admin"/>
 </template>
 
 <script setup>
@@ -24,7 +24,8 @@ import Simulator from './components/Simulator.vue'
     data() {
       return {
         teams: [],
-        type: 'pos'
+        type: 'pos',
+        admin: window.localStorage.getItem('mru:admin')==='true'
       }
     },
   }
