@@ -163,6 +163,7 @@ export default {
         .attr('y', -20);
 
       const update = () => {
+          const filteredSeries = this.data.series.filter(s => s)
           const min = d3.min(filteredSeries, d => d3.min(d.values.map(v => v[this.type])))
           const max = d3.max(filteredSeries, d => d3.max(d.values.map(v => v[this.type])))
           yDomain = [min, max]

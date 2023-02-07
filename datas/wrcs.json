@@ -20,8 +20,13 @@
     "end": "2015-10-31"
   },
   {
-  	"name":"Coupe du monde de rugby à XV 2019",
+    "name":"Coupe du monde de rugby à XV 2019",
     "start": "2019-9-20",
     "end": "2019-11-2"
+  },
+  {
+    "name":"Coupe du monde de rugby à XV 2023",
+    "start": "2023-9-8",
+    "end": "2023-10-28"
   }
 ]
