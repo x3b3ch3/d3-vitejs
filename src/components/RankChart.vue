@@ -21,12 +21,13 @@ export default {
       let dates = [];
       const topTeams = this.allteams.map((team, id) => {
         id = team.id
-        const promise = d3.json(`../datas/teams/${id}.min.json`)
+        if (team.active)
+          promises.push(d3.json(`../datas/teams/${id}.min.json`)
                           .then(datas => {
             if (!dates.length) dates = Object.keys(datas).map(d=>new Date(d))
             return Object.assign(team, {values:Object.values(datas)})
-          })
-        promises.push(promise)
+          }))
+        else promises.push(Promise.resolve(Object.assign(team, {values:[]})))
         return team
       })
       Promise.all(promises).then(datas =>  {
@@ -169,7 +170,7 @@ export default {
           yDomain = [min, max]
           if (this.type === 'pos') yDomain = yDomain.reverse() 
           this.y = d3.scaleLinear()
-            .domain(yDomain).nice()
+            .domain(yDomain)
             .range([height - margin.bottom, margin.top])
 
           yAxisEl
@@ -182,28 +183,45 @@ export default {
           path.selectAll('path')
               .data(this.data.series)
               .join(
-                enter => {
-                  return enter.append('path')
+                enter => enter.append('path')
                   .attr('stroke', d => colors[(d || {}).abbreviation] || 'steelblue')
+                  .attr('class', d => (d || {}).abbreviation || '')
                   .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
-                  .attr('stroke-dasharray', (d,id,pathes) => pathes[id].getTotalLength() + ' ' + pathes[id].getTotalLength())
-                  .attr('stroke-dashoffset', (d,id,pathes) => pathes[id].getTotalLength())
+                  .attr('stroke-opacity', 0)
+                  // .attr('stroke-dasharray', (d,i,pathes) => {
+                  //   if (d && d.abbreviation) {
+                  //     const path = pathes.find(p => p ? p.classList.contains(d.abbreviation) : false)
+                  //     if (path) return `${path.getTotalLength()} ${path.getTotalLength()}`
+                  //   }
+                  // }).attr('stroke-dashoffset', (d,i,pathes) => {
+                  //   if (d && d.abbreviation) {
+                  //     const path = pathes.find(p => p ? p.classList.contains(d.abbreviation) : false)
+                  //     if (path) return path.getTotalLength()
+                  //   }
+                  // })
                   .call(enter => enter.transition().duration(1000)
-                      .attr('stroke-dashoffset', 0)
+                      .attr('stroke-opacity', 1)
                   )
-                },
-                update =>  update
+                ,
+                update => update
                   .call(update => update
                     .transition().duration(1000)
                     .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
+                    // .attr('stroke-dasharray', (d,i,pathes) => {
+                    //   if (d && d.abbreviation) {
+                    //     const path = pathes.find(p => p ? p.classList.contains(d.abbreviation) : false)
+                    //     if (path) return `${path.getTotalLength()} ${path.getTotalLength()}`
+                    //   }
+                    // })
                     .on('end', () => {
                       svg.call(this.hover, path.selectAll('path'))
+                      //   console.log('update:end')//,id, pathes[id].getTotalLength())
+                      // update.attr('stroke-dasharray', (d,id,pathes) => {
+                      //   return pathes[id].getTotalLength() + ' ' + pathes[id].getTotalLength()
+                      // })
                     })
-                ),
-                exit => exit
-                  .transition().duration(1000)
-                  .attr('stroke-dashoffset', (d,id,pathes) => pathes[id].getTotalLength())
-                  .on('end', () => exit.remove())
+                  ),
+                exit => exit.remove()
               )
               .attr('stroke', d => colors[(d || {}).abbreviation] || 'steelblue')
               .style('mix-blend-mode', 'multiply')
@@ -244,8 +262,8 @@ export default {
         const i = d3.bisectCenter(data.dates, xm);
         const s = d3.least(data.series.filter(s => s), d => Math.abs(d.values.map(v => v[prop])[i] - ym));
         path.style('stroke', d => d === s ? colors[d.abbreviation]  : '#bbb').filter(d => d === s).raise();
-        popin.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
-        front.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
+        popin.transition().attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
+        front.transition().select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
         front.select('text.name').text(s.name);
         front.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts.toPrecision(4)}`)[i].toString())
         back.attr('width', () => 2*frontMargin+d3.max([...front.selectAll('text')].map(t=>t.getBBox().width)))

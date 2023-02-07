@@ -1,21 +1,21 @@
 <template>
   <aside @mouseenter="open" @mouseleave="close">
-    <h1>Simulator</h1>
+    <h1>Simulaterur</h1>
     <div class="team-form">
-      <label>Home</label>
+      <label>Domicile</label>
       <select class="home-team" v-model="selectedHome" @change="changeTeam">
           <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]" >{{ value[1].name }}</option>
       </select>
       <input class="home-score" type="number" :value="0" pattern="[0-9]+" name="" @change="changeScore">
     </div>
     <div class="team-form">
-      <label>Guest</label>
+      <label>Visiteurs </label>
       <select class="guest-team" v-model="selectedGuest" @change="changeTeam">
           <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]" >{{ value[1].name }}</option>
       </select>
       <input class="guest-score" type="number" :value="0" pattern="[0-9]+" name="" @change="changeScore">
     </div>
-    <button @click="compute">></button>
+    <button @click="compute">Résultat (console) ></button>
   </aside>
 </template>
 
@@ -135,5 +135,8 @@ export default {
 
     input[type='number']
       width           : 50px
+
+  button
+    cursor            : pointer
   
 </style>

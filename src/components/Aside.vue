@@ -26,7 +26,7 @@ import teams from '/datas/teams.min.json'
 <script>
 export default {
   mounted() {
-    this.lis = [...document.querySelectorAll('.teams li.active')]
+    this.selis = [...document.querySelectorAll('.teams li.active')]
     this.emitIds()
     this.emitType()
     setTimeout(this.close, 2000)
@@ -49,28 +49,23 @@ export default {
       event.target.classList.toggle('active')
       // si el courant est actif, ajouter au tableau
       if (event.target.classList.contains('active')) 
-        this.lis.push(event.target)
+        this.selis.push(event.target)
       // sinon, retirer au tableau
       else
-        this.lis.splice(this.lis.indexOf(event.target),1)
+        this.selis.splice(this.selis.indexOf(event.target),1)
 
       // si 10 éléménts, retirer et éteindre le premier du tableau
-      if (this.lis.length > 10)
-        this.lis.shift().classList.remove('active')
+      if (this.selis.length > 10)
+        this.selis.shift().classList.remove('active')
 
       this.emitIds()
     },
     emitIds(event) {
-      const datas = [];
-      for (const li of this.lis) {
+      this.$emit('changed-team-ids', [...document.querySelectorAll('.teams li')].map(li => {
         const id = li.dataset.id
-        datas[id] = Object.assign({id},teams[id])
-      }
-      this.$emit('changed-team-ids', datas)
-      // this.$emit('changed-team-ids', this.lis.map(e => {
-      //   const id = e.dataset.id
-      //   return Object.assign({id},teams[id])
-      // }))
+        const active = li.classList.contains('active')
+        return Object.assign({id},teams[id],{active})
+      }))
     },
     toggle(flag) {
       this.$el.classList.toggle('closed',flag)
@@ -85,10 +80,10 @@ export default {
   data() {
     return {
       types: [{
-                name:'Classement',
+                name:'Rang mondial',
                 field:'pos'
               },{
-                name:'Notes',
+                name:'Points',
                 field:'pts'
               }
       ],
@@ -142,6 +137,7 @@ export default {
     li 
       text-align      : left
       color           : grey
+      cursor          : pointer
     
       &.active 
         color         : blue
