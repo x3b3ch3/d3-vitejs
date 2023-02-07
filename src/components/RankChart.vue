@@ -121,7 +121,7 @@ export default {
       const yAxisGridEl = svg.append('g')
          .call(yAxisGrid);
 
-      const line = d3.line()
+      const line = d3.line().curve(d3.curveBasis)
         .defined(d => !isNaN(d))
         .x((d, i) => this.x(this.data.dates[i]))
         .y(d => this.y(d));
