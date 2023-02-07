@@ -85,10 +85,10 @@ export default {
   data() {
     return {
       types: [{
-        name:'Position',
+        name:'Classement',
         field:'pos'
       },{
-        name:'Points',
+        name:'Notes',
         field:'pts'
       }]
     }
