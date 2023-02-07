@@ -193,8 +193,6 @@ export default {
                 },
                 update =>  update
                   .call(update => update
-                    .attr('stroke-dasharray', (d,id,pathes) => pathes[id].getTotalLength() + ' ' + pathes[id].getTotalLength())
-                    .attr('stroke-dashoffset', 0)
                     .transition().duration(1000)
                     .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
                     .on('end', () => {
