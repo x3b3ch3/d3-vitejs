@@ -93,5 +93,10 @@
     "name":"Tournoi des 6 nations 2022",
     "start": "2022-2-5",
     "end": "2022-3-19"
+  },
+  {
+    "name":"Tournoi des 6 nations 2023",
+    "start": "2023-2-4",
+    "end": "2023-3-18"
   }
 ]
