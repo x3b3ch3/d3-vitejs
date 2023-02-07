@@ -1,13 +1,13 @@
 <template>
   <aside @mouseenter="open" @mouseleave="close">
-    <h1>Select props</h1>
+    <h1>{{ titles.mode }}</h1>
     <ul class="types">
       <li :key="index" 
           v-bind:data-id="value.field"
           v-bind:class="{'active' : !index }"
           v-for="(value, index) in types" @click="typesLiClick">{{ value.name }}</li>
     </ul>
-    <h1>Select teams (10 max)</h1>
+    <h1>{{ titles.team }}</h1>
     <ul class="teams">
       <li :key="key" 
           v-bind:data-id="value[0]"
@@ -85,12 +85,17 @@ export default {
   data() {
     return {
       types: [{
-        name:'Classement',
-        field:'pos'
-      },{
-        name:'Notes',
-        field:'pts'
-      }]
+                name:'Classement',
+                field:'pos'
+              },{
+                name:'Notes',
+                field:'pts'
+              }
+      ],
+      titles:{
+        mode:'Sélectionner un mode d\'affichage',
+        team:'Sélectionner une équipe (10 max)'
+      }
     }
   }
 }
