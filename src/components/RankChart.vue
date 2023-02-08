@@ -149,19 +149,19 @@ export default {
         .attr('fill', '#FFF')
         .attr('stroke', '#000')
         .attr('stroke-opacity', .3)
-        .attr('fill-opacity', .7)
+        .attr('fill-opacity', .8)
 
       front.append('text')
         .attr('class', 'date')
-        .attr('y', -60);
+        .attr('y', -50);
 
       front.append('text')
         .attr('class', 'name')
-        .attr('y', -40);
+        .attr('y', -75);
 
       front.append('text')
         .attr('class', 'score')
-        .attr('y', -20);
+        .attr('y', -25);
 
       const update = () => {
           const filteredSeries = this.data.series.filter(s => s)
@@ -262,10 +262,10 @@ export default {
         const i = d3.bisectCenter(data.dates, xm);
         const s = d3.least(data.series.filter(s => s), d => Math.abs(d.values.map(v => v[prop])[i] - ym));
         path.style('stroke', d => d === s ? colors[d.abbreviation]  : '#bbb').filter(d => d === s).raise();
-        popin.transition().attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
-        front.transition().select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.FULL_DATE));
-        front.select('text.name').text(s.name);
-        front.select('text.score').text(s.values.map(v => `pos:${v.pos}; pts:${v.pts.toPrecision(4)}`)[i].toString())
+        popin.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
+        front.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.DATE_FULL));
+        front.select('text.name').text(`${s.name} (${s.abbreviation})`);
+        front.select('text.score').text(s.values.map(v => `Points : ${v.pts.toPrecision(4)}  |  Rang : ${v.pos}`)[i].toString())
         back.attr('width', () => 2*frontMargin+d3.max([...front.selectAll('text')].map(t=>t.getBBox().width)))
         back.attr('height', () => 1.5*frontMargin+d3.sum([...front.selectAll('text')].map(t=>t.getBBox().height)))
         back.attr('x', () => -(2*frontMargin+d3.max([...front.selectAll('text')].map(t=>t.getBBox().width)))/2)
@@ -305,9 +305,16 @@ export default {
 </script>
 <style lang="sass">
   p.chart
-    margin : 0 100px
-    height : calc(100vh - 100px)
+    margin                  : 0 100px
+    height                  : calc(100vh - 100px)
 
   .tick text
-    font-size : 16px
+    font-size               : 16px
+
+  svg text
+    font-family             : Avenir, Helvetica, Arial, sans-serif
+    -webkit-font-smoothing  : antialiased
+    -moz-osx-font-smoothing : grayscale
+    text-align              : center
+    color                   : #2c3e50
 </style>
