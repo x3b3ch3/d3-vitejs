@@ -87,36 +87,43 @@ export default {
     },
     compute() {
       alert('ok')
-      // const diffPts = this.clamp(this.match.home.pts + 3 - this.match.guest.pts, -10, 10)
-      // const diffScore = this.match.home.score - this.match.guest.score
-      // let coeff = Math.abs(diffScore) > 15 ? 1.5 : 1
-      // const uTeams = Object.entries(this.teams).filter(d => d[1].pos)
-      // const teamTypes = ['home', 'guest']
-      // for (const teamType of teamTypes) {
-      //   if (teamType === 'guest') coeff *= -1
-      //   this.match[teamType].newPts = this.match[teamType].pts - (diffPts / 10 - Math.sign(diffScore)) * coeff
-      //   const team = uTeams.find(d => d[1].abbreviation == this.match[teamType].abbreviation)
-      //   team.newPts = this.match[teamType].newPts
-      // }
-      // uTeams.sort((a,b) => (a[1].newPts || a[1].pts) < (b[1].newPts || b[1].pts))
-      // for (const teamType of teamTypes) {
-      //   const team = this.match[teamType]
-      //   team.newPos = uTeams.findIndex(d => d[1].abbreviation == team.abbreviation) +1
-      // }
+      const diffPts = this.clamp(this.match.home.pts + 3 - this.match.guest.pts, -10, 10)
+      const diffScore = this.match.home.score - this.match.guest.score
+      let coeff = Math.abs(diffScore) > 15 ? 1.5 : 1
+      const uTeams = Object.entries(this.teams).filter(d => d[1].pos)
+      const teamTypes = ['home', 'guest']
+      for (const teamType of teamTypes) {
+        if (teamType === 'guest') coeff *= -1
+        this.match[teamType].newPts = this.match[teamType].pts - (diffPts / 10 - Math.sign(diffScore)) * coeff
+        const team = uTeams.find(d => d[1].abbreviation == this.match[teamType].abbreviation)
+        team.newPts = this.match[teamType].newPts
+      }
+      uTeams.sort((a,b) => (a[1].newPts || a[1].pts) < (b[1].newPts || b[1].pts))
+      for (const teamType of teamTypes) {
+        const team = this.match[teamType]
+        team.newPos = uTeams.findIndex(d => d[1].abbreviation == team.abbreviation) +1
+      }
 
-      // this.$el.querySelector('.results').innerHTML = ''
-      // // search first and last index where pos has changed and isn't ex aequo
-      // const search = (d,i,l) => d[1].pos !== (i+1) && l.filter(e => e[1].pts === d[1].pts).length === 1
-      // const min = uTeams.findIndex(search)
-      // const max = uTeams.findLastIndex(search)
-      // for (let index = min; index <= max; index++) {
-      //   const team = uTeams[index][1]
-      //   let diffPts = ((team.newPts || team.pts) - team.pts).toPrecision(2)
-      //   let diffPos = (team.pos - (index + 1))
-      //   if (diffPos > 0) diffPos = '+' + diffPos
-      //   if (diffPts > 0) diffPts = '+' + diffPts
-      //   this.$el.querySelector('.results').innerHTML += `<tr><td>${team.abbreviation}</td><td>${(team.newPts || team.pts).toPrecision(4)}</td><td>(${diffPts})</td><td>${index + 1}</td><td>(${diffPos})</td></tr>`
-      // }
+      this.$el.querySelector('.results').innerHTML = ''
+      const search = (d,i,l) => {
+        // search first and last index where pos has changed
+        const hasChangedPos = d[1].pos !== (i+1)
+        // team isn't ex aequo
+        const isExAequo = l.filter(e => e[1].pts === d[1].pts).length === 1
+        // team has a new score
+        const hasNewScore = !!d[1].newPts
+        return (hasChangedPos && isExAequo) || hasNewScore
+      }
+      const min = uTeams.findIndex(search)
+      const max = uTeams.findLastIndex(search)
+      for (let index = min; index <= max; index++) {
+        const team = uTeams[index][1]
+        let diffPts = ((team.newPts || team.pts) - team.pts).toPrecision(2)
+        let diffPos = (team.pos - (index + 1))
+        if (diffPos > 0) diffPos = '+' + diffPos
+        if (diffPts > 0) diffPts = '+' + diffPts
+        this.$el.querySelector('.results').innerHTML += `<tr><td>${team.abbreviation}</td><td>${(team.newPts || team.pts).toPrecision(4)}</td><td>(${diffPts})</td><td>${index + 1}</td><td>(${diffPos})</td></tr>`
+      }
 
     },
     clean() {
