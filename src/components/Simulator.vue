@@ -113,7 +113,6 @@ export default {
         const hasNewScore = !!d[1].newPts
         return (hasChangedPos && isExAequo) || hasNewScore
       }
-      alert('5')
       const min = uTeams.findIndex(search)
       const max = uTeams.findLastIndex(search)
       for (let index = min; index <= max; index++) {
