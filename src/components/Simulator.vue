@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     sortedTeams: function () {
-      return Object.entries(teams).sort((a,b) => a[1].pos - b[1].pos); // Do your custom sorting here
+      return Object.entries(teams).filter(d => d[1].pos).sort((a,b) => a[1].pos - b[1].pos); // Do your custom sorting here
     }
   },
   methods: {
@@ -86,28 +86,23 @@ export default {
       this.match[targetTeam].score = +target.value
     },
     compute() {
-      debugger
-      alert('1')
       const diffPts = this.clamp(this.match.home.pts + 3 - this.match.guest.pts, -10, 10)
       const diffScore = this.match.home.score - this.match.guest.score
       let coeff = Math.abs(diffScore) > 15 ? 1.5 : 1
-      const uTeams = Object.entries(this.teams).filter(d => d[1].pos)
+      const uTeams = Object.entries(teams).filter(d => d[1].pos)
       const teamTypes = ['home', 'guest']
-      alert('2')
       for (const teamType of teamTypes) {
         if (teamType === 'guest') coeff *= -1
         this.match[teamType].newPts = this.match[teamType].pts - (diffPts / 10 - Math.sign(diffScore)) * coeff
         const team = uTeams.find(d => d[1].abbreviation == this.match[teamType].abbreviation)
         team.newPts = this.match[teamType].newPts
       }
-      alert('3')
       uTeams.sort((a,b) => (a[1].newPts || a[1].pts) < (b[1].newPts || b[1].pts))
       for (const teamType of teamTypes) {
         const team = this.match[teamType]
         team.newPos = uTeams.findIndex(d => d[1].abbreviation == team.abbreviation) +1
       }
 
-      alert('4')
       this.$el.querySelector('.results').innerHTML = ''
       const search = (d,i,l) => {
         // search first and last index where pos has changed
@@ -131,7 +126,7 @@ export default {
       }
     },
     clean() {
-      const uTeams = Object.entries(this.teams)
+      const uTeams = Object.entries(teams)
       this.$el.querySelector('.results').innerHTML = ''
       uTeams.filter(e => e[1].newPts).forEach(e => {
         delete e[1].newPts
