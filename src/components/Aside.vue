@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     sortedTeams: function () {
-      return Object.entries(teams).sort((a,b) => a[1].pos - b[1].pos);
+      return Object.entries(teams).filter(d => d[1].pos).sort((a,b) => a[1].pos - b[1].pos);
     }
   },
   methods: {

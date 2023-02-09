@@ -24,10 +24,10 @@ import Simulator from './components/Simulator.vue'
     },
     data() {
       return {
-        teams: [],
-        type: 'pos',
-        titre: 'Historique des classements / notes WRU',
-        admin: window.localStorage.getItem('mru:admin')==='true'
+        teams : [],
+        type  : 'pos',
+        titre : 'Historique des classements / notes WRU',
+        admin : true // window.localStorage.getItem('mru:admin')==='true'
       }
     },
   }
@@ -41,6 +41,9 @@ import Simulator from './components/Simulator.vue'
     text-align              : center
     color                   : #2c3e50
     margin-top              : 20px
+
+    h2
+      margin-bottom : 0
 
     .teams
       [data-id]:before
