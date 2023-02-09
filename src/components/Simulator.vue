@@ -86,6 +86,7 @@ export default {
       this.match[targetTeam].score = +target.value
     },
     compute() {
+      debugger
       const diffPts = this.clamp(this.match.home.pts + 3 - this.match.guest.pts, -10, 10)
       const diffScore = this.match.home.score - this.match.guest.score
       let coeff = Math.abs(diffScore) > 15 ? 1.5 : 1
