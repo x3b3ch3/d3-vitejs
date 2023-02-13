@@ -5,14 +5,14 @@
       <tr class="team-form">
         <td><label>Domicile</label></td>
         <td><select class="home-team" v-model="selectedHome" @change="changeTeam">
-          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]" >{{ value[1].name }} ({{ value[1].abbreviation }})</option>
+          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
         </select></td>
         <td><input class="home-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
       </tr>
       <tr class="team-form">
         <td><label>Visiteurs</label></td>
         <td><select class="guest-team" v-model="selectedGuest" @change="changeTeam">
-          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]" >{{ value[1].name }} ({{ value[1].abbreviation }})</option>
+          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
         </select></td>
         <td><input class="guest-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
       </tr>
