@@ -35,6 +35,8 @@ global_teams = JSON.parse('{}')
 			rank_for_team = rank.clone
 			rank_for_team.delete('team')
 			rank_for_team.delete('matches')
+			rank_for_team.delete('previousPts')
+			rank_for_team.delete('previousPos')
 
 			rank['teamId'] = team['id']
 
