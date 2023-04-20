@@ -26,7 +26,7 @@ import Simulator from './components/Simulator.vue'
       return {
         teams : [],
         type  : 'pos',
-        titre : 'Historique des classements / notes WRU',
+        titre : 'Historique des classements / notes WRU masculins',
         admin : true // window.localStorage.getItem('mru:admin')==='true'
       }
     },

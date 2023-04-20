@@ -4,15 +4,15 @@
     <ul class="types">
       <li :key="index" 
           v-bind:data-id="value.field"
-          v-bind:class="{'active' : !index }"
+          v-bind:class="{'active' : index === 0 }"
           v-for="(value, index) in types" @click="typesLiClick">{{ value.name }}</li>
     </ul>
     <h1>{{ titles.team }}</h1>
     <ul class="teams">
-      <li :key="key" 
+      <li :key="index" 
           v-bind:data-id="value[0]"
-          v-bind:class="{'active' : value[0] === '42' || value[0] === '37' }"
-          v-for="(value, key, index) in sortedTeams" @click="teamsLiClick">{{ value[1].pos }}. {{ value[1].name }} ({{ value[1].abbreviation }}) - {{ Math.round(100*value[1].pts)/100 }}</li>
+          v-bind:class="{'active' : value[0] === '42' || value[1].pos === 1 }"
+          v-for="(value, index) in sortedTeams" @click="teamsLiClick">{{ value[1].pos }}. {{ value[1].name }} ({{ value[1].abbreviation }}) - {{ Math.round(100*value[1].pts)/100 }}</li>
     </ul>
   </aside>
 </template>
@@ -32,9 +32,7 @@ export default {
     setTimeout(this.close, 2000)
   },
   computed: {
-    sortedTeams: function () {
-      return Object.entries(teams).filter(d => d[1].pos).sort((a,b) => a[1].pos - b[1].pos);
-    }
+    sortedTeams: () => Object.entries(teams).filter(d => d[1].pos).sort((a,b) => a[1].pos - b[1].pos)
   },
   methods: {
     typesLiClick(event) {
@@ -80,12 +78,12 @@ export default {
   data() {
     return {
       types: [{
-                name:'Rang mondial',
-                field:'pos'
-              },{
                 name:'Points',
                 field:'pts'
-              }
+              },{
+                name:'Rang mondial',
+                field:'pos'
+              },
       ],
       titles:{
         mode:'Sélectionner un mode d\'affichage',

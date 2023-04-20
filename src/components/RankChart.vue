@@ -183,42 +183,18 @@ export default {
           path.selectAll('path')
               .data(this.data.series)
               .join(
-                enter => enter.append('path')
+                enter => {enter.append('path')
                   .attr('stroke', d => colors[(d || {}).abbreviation] || 'steelblue')
                   .attr('class', d => (d || {}).abbreviation || '')
-                  .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
-                  .attr('stroke-opacity', 0)
-                  // .attr('stroke-dasharray', (d,i,pathes) => {
-                  //   if (d && d.abbreviation) {
-                  //     const path = pathes.find(p => p ? p.classList.contains(d.abbreviation) : false)
-                  //     if (path) return `${path.getTotalLength()} ${path.getTotalLength()}`
-                  //   }
-                  // }).attr('stroke-dashoffset', (d,i,pathes) => {
-                  //   if (d && d.abbreviation) {
-                  //     const path = pathes.find(p => p ? p.classList.contains(d.abbreviation) : false)
-                  //     if (path) return path.getTotalLength()
-                  //   }
-                  // })
-                  .call(enter => enter.transition().duration(1000)
-                      .attr('stroke-opacity', 1)
-                  )
-                ,
+                  .transition().duration(1000)
+                    .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
+                },
                 update => update
                   .call(update => update
                     .transition().duration(1000)
-                    .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
-                    // .attr('stroke-dasharray', (d,i,pathes) => {
-                    //   if (d && d.abbreviation) {
-                    //     const path = pathes.find(p => p ? p.classList.contains(d.abbreviation) : false)
-                    //     if (path) return `${path.getTotalLength()} ${path.getTotalLength()}`
-                    //   }
-                    // })
+                      .attr('d', d => line(((d || {}).values || []).map(v => v[this.type])))
                     .on('end', () => {
                       svg.call(this.hover, path.selectAll('path'))
-                      //   console.log('update:end')//,id, pathes[id].getTotalLength())
-                      // update.attr('stroke-dasharray', (d,id,pathes) => {
-                      //   return pathes[id].getTotalLength() + ' ' + pathes[id].getTotalLength()
-                      // })
                     })
                   ),
                 exit => exit.remove()
