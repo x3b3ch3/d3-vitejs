@@ -19,11 +19,11 @@ global_teams = JSON.parse('{}')
 	if !ranks[week]
 		# si la semaine est dejà dans le backup, sinon on fetche
 		if backup[week]
-			puts "get #{week} from local"
+			# puts "get #{week} from local"
 		else
-			json_file = URI.open("https://cmsapi.pulselive.com/rugby/rankings/mru?date=#{week}")
+			json_file = URI.open("https://api.wr-rims-prod.pulselive.com/rugby/v3/rankings/mru?date=#{week}")
 			backup[week] = JSON.parse(File.read(json_file))['entries']
-			puts "get #{week} from remote"
+			# puts "get #{week} from remote"
 		end
 
 		# on laisse le backup intact et on allège de fichier rank des infos superflues
@@ -40,25 +40,30 @@ global_teams = JSON.parse('{}')
 
 			rank['teamId'] = team['id']
 
-			puts "#{week} #{team}" 
+			# puts "#{week} #{team}" 
+			rank_team_id = rank['teamId'].to_s
 			if !rank['teamId'].nil?
-				if (global_teams[rank['teamId']].nil?)
-					global_teams[rank['teamId']] = JSON.parse('{}')
+				puts "write in team specific file #{week}"
+				if (global_teams[rank_team_id].nil?)
+					global_teams[rank_team_id] = JSON.parse('{}')
 				end
-				if (global_teams[rank['teamId']][week].nil?)
-					global_teams[rank['teamId']][week] = rank_for_team
+				if (global_teams[rank_team_id][week].nil?)
+					global_teams[rank_team_id][week] = rank_for_team
 				end
 			end
 
 			# si le fichier teams ne connait pas cette équipe
-			if !teams[team['id']]
-				team_id = team['id']
-				team.delete('altId')
-				team.delete('annotations')
-				team.delete('id')
-			else
-				puts "team #{team['id']} (#{team['name']}) already exists"
-			end
+			team_id = team['id'].to_s
+			team.delete('altId')
+			team.delete('annotations')
+			team.delete('countryCode')
+			team.delete('id')
+			# if !teams[team_id]
+			# 	# puts "#{team['id']} #{teams[team_id]}"
+			# 	# team_id = team['id']
+			# else
+			# 	# puts "team #{team['id']} (#{team['name']}) already exists"
+			# end
 
 			teams[team_id] = team
 
@@ -71,9 +76,11 @@ global_teams = JSON.parse('{}')
 			rank
 		end
 	else
-		puts "#{week} already exists"
+		# puts "#{week} already exists"
 	end
 end
+
+# puts global_teams
 
 global_teams.each do |key, value|
 	File.open("./teams/#{key}.min.json",'w') do |f|
@@ -85,6 +92,7 @@ File.open('./teams.min.json','w') do |f|
 	# sort teams with most recent ranking
 	# out = JSON.parse('{}')
 	last_week = backup.each_value.reverse_each.next rescue StopIteration
+	# puts ">>>>>> last week #{last_week}"
 	last_week.each do |t|
 		team = teams.select do |key, hash|
 			!key.nil? && hash['abbreviation'] == t['team']['abbreviation']
