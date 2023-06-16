@@ -26,7 +26,7 @@ import Simulator from './components/Simulator.vue'
       return {
         teams : [],
         type  : 'pos',
-        titre : 'Historique des classements / notes WRU masculins',
+        titre : 'Historique des classements / notes World Rugby masculins',
         admin : true // window.localStorage.getItem('mru:admin')==='true'
       }
     },

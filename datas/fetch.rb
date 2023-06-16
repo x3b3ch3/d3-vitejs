@@ -38,41 +38,30 @@ global_teams = JSON.parse('{}')
 			rank_for_team.delete('previousPts')
 			rank_for_team.delete('previousPos')
 
-			rank['teamId'] = team['id']
+			team_id = team['id'].to_s
 
-			# puts "#{week} #{team}" 
-			rank_team_id = rank['teamId'].to_s
-			if !rank['teamId'].nil?
-				puts "write in team specific file #{week}"
-				if (global_teams[rank_team_id].nil?)
-					global_teams[rank_team_id] = JSON.parse('{}')
+			if !team_id.empty?
+				if (global_teams[team_id].nil?)
+					global_teams[team_id] = JSON.parse('{}')
 				end
-				if (global_teams[rank_team_id][week].nil?)
-					global_teams[rank_team_id][week] = rank_for_team
+				if (global_teams[team_id][week].nil?)
+					global_teams[team_id][week] = rank_for_team
 				end
 			end
 
-			# si le fichier teams ne connait pas cette équipe
-			team_id = team['id'].to_s
 			team.delete('altId')
 			team.delete('annotations')
 			team.delete('countryCode')
 			team.delete('id')
-			# if !teams[team_id]
-			# 	# puts "#{team['id']} #{teams[team_id]}"
-			# 	# team_id = team['id']
-			# else
-			# 	# puts "team #{team['id']} (#{team['name']}) already exists"
-			# end
 
 			teams[team_id] = team
 
 			# supression des données superflues
+			rank['teamId'] = team_id
 			rank.delete('team')
 			rank.delete('pos')
 			rank.delete('previousPts')
 			rank.delete('matches')
-			# rank.delete('previousPos')
 			rank
 		end
 	else
