@@ -91,7 +91,7 @@ export default {
       const targetTeam = target.classList.contains('team1-score')
               ? 'team1'
               : 'team2'
-      this.match[targetTeam].score = +target.value
+      this.match[targetTeam].score = +target.value;
     },
     changeHomeBonus(event) {
       const target = event.target
