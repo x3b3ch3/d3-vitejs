@@ -2,19 +2,27 @@
   <aside @mouseenter="open" @mouseleave="close">
     <h1>Simulateur</h1>
     <table class="form">
-      <tr class="team-form">
-        <td><label>Domicile</label></td>
-        <td><select class="home-team" v-model="selectedHome" @change="changeTeam">
-          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
-        </select></td>
-        <td><input class="home-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
+      <tr>
+        <td>Équipe</td>
+        <td>Score</td>
+        <td>Dom?</td>
       </tr>
       <tr class="team-form">
-        <td><label>Visiteurs</label></td>
-        <td><select class="guest-team" v-model="selectedGuest" @change="changeTeam">
+        <td><select class="team1" v-model="selectedTeam1" @change="changeTeam">
           <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
         </select></td>
-        <td><input class="guest-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
+        <td><input class="team1-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
+        <td><input class="team1-home home-bonus" type="checkbox" name="" @change="changeHomeBonus"></td>
+      </tr>
+      <tr class="team-form">
+        <td><select class="team2" v-model="selectedTeam2" @change="changeTeam">
+          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
+        </select></td>
+        <td><input class="team2-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
+        <td><input class="team2-home home-bonus" type="checkbox" name="" @change="changeHomeBonus"></td>
+      </tr>
+      <tr>
+        <td colspan="3">Coupe du monde <input class="wcup-bonus" type="checkbox" name=""></td>
       </tr>
       <tr>
         <td colspan="3"><button @click="compute">Résultats ></button> <button @click="clean">Remise à 0</button></td>
@@ -68,9 +76,9 @@ export default {
     changeTeam(event) {
       const target = event.target
       const uid = +target.value
-      const targetTeam = target.classList.contains('home-team')
-              ? 'home'
-              : 'guest'
+      const targetTeam = target.classList.contains('team1')
+              ? 'team1'
+              : 'team2'
       this.match[targetTeam] = teams[event.target.value]
       this.match[targetTeam].score = +this.$el.querySelector(`.${targetTeam}-score`).value
       const promise = d3.json(`../datas/teams/${uid}.min.json`)
@@ -80,20 +88,36 @@ export default {
     },
     changeScore(event) {
       const target = event.target
-      const targetTeam = target.classList.contains('home-score')
-              ? 'home'
-              : 'guest'
+      const targetTeam = target.classList.contains('team1-score')
+              ? 'team1'
+              : 'team2'
       this.match[targetTeam].score = +target.value
     },
+    changeHomeBonus(event) {
+      const target = event.target
+      const targetTeam = target.classList.contains('team1-home')
+              ? 'team2'
+              : 'team1';
+      document.querySelector(`.${targetTeam}-home`).checked=false;
+    },
     compute() {
-      const diffPts = this.clamp(this.match.home.pts + 3 - this.match.guest.pts, -10, 10)
-      const diffScore = this.match.home.score - this.match.guest.score
-      let coeff = Math.abs(diffScore) > 15 ? 1.5 : 1
+      const has_home_bonus = document.querySelector('.home-bonus:checked');
+      const home_bonus = !has_home_bonus
+                          ? 0
+                          : has_home_bonus.classList.contains('team1-home')
+                            ? 3
+                            : -3;
+      const wcup_bonus = document.querySelector('.wcup-bonus:checked')
+                          ? 2
+                          : 1;
+      const diffPts = this.clamp(this.match.team1.pts + home_bonus - this.match.team2.pts, -10, 10);
+      const diffScore = this.match.team1.score - this.match.team2.score
+      let coeff = Math.abs(diffScore) > 15 ? 1.5 : 1;
       const uTeams = Object.entries(teams).filter(d => d[1].pos)
-      const teamTypes = ['home', 'guest']
+      const teamTypes = ['team1', 'team2']
       for (const teamType of teamTypes) {
-        if (teamType === 'guest') coeff *= -1
-        this.match[teamType].newPts = this.match[teamType].pts - (diffPts / 10 - Math.sign(diffScore)) * coeff
+        if (teamType === 'team2') coeff *= -1
+        this.match[teamType].newPts = this.match[teamType].pts - (diffPts / 10 - Math.sign(diffScore)) * coeff * wcup_bonus
         const team = uTeams.find(d => d[1].abbreviation == this.match[teamType].abbreviation)
         team.newPts = this.match[teamType].newPts
       }
@@ -103,6 +127,7 @@ export default {
         team.newPos = uTeams.findIndex(d => d[1].abbreviation == team.abbreviation) +1
       }
 
+      // print new ranking results
       this.$el.querySelector('.results').innerHTML = ''
       const search = (d,i,l) => {
         // search first and last index where pos has changed
@@ -138,8 +163,8 @@ export default {
   },
   data() {
     return {
-      selectedHome  : '33',
-      selectedGuest : '42'
+      selectedTeam1 : '33',
+      selectedTeam2 : '42'
     }
   }
 }
