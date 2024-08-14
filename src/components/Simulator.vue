@@ -2,33 +2,35 @@
   <aside @mouseenter="open" @mouseleave="close">
     <h1>Simulateur</h1>
     <table class="form">
-      <tr>
-        <td>Équipe</td>
-        <td>Score</td>
-        <td>Dom?</td>
-      </tr>
-      <tr class="team-form">
-        <td><select class="team1" v-model="selectedTeam1" @change="changeTeam">
-          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
-        </select></td>
-        <td><input class="team1-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
-        <td><input class="team1-home home-bonus" type="checkbox" name="" @change="changeHomeBonus"></td>
-      </tr>
-      <tr class="team-form">
-        <td><select class="team2" v-model="selectedTeam2" @change="changeTeam">
-          <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
-        </select></td>
-        <td><input class="team2-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
-        <td><input class="team2-home home-bonus" type="checkbox" name="" @change="changeHomeBonus"></td>
-      </tr>
-      <tr>
-        <td colspan="3">Coupe du monde <input class="wcup-bonus" type="checkbox" name=""></td>
-      </tr>
-      <tr>
-        <td colspan="3"><button @click="compute">Résultats ></button> <button @click="clean">Remise à 0</button></td>
-      </tr>
+      <tbody>
+        <tr>
+          <td>Équipe</td>
+          <td>Score</td>
+          <td>Dom?</td>
+        </tr>
+        <tr class="team-form">
+          <td><select class="team1" v-model="selectedTeam1" @change="changeTeam">
+            <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
+          </select></td>
+          <td><input class="team1-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
+          <td><input class="team1-home home-bonus" type="checkbox" name="" @change="changeHomeBonus"></td>
+        </tr>
+        <tr class="team-form">
+          <td><select class="team2" v-model="selectedTeam2" @change="changeTeam">
+            <option v-for="(value, key, index) in sortedTeams" v-bind:value="value[0]">{{ value[1].name }} ({{ value[1].abbreviation }})</option>
+          </select></td>
+          <td><input class="team2-score" type="number" value="0" pattern="[0-9]+" name="" @change="changeScore"></td>
+          <td><input class="team2-home home-bonus" type="checkbox" name="" @change="changeHomeBonus"></td>
+        </tr>
+        <tr>
+          <td colspan="3">Coupe du monde <input class="wcup-bonus" type="checkbox" name=""></td>
+        </tr>
+        <tr>
+          <td colspan="3"><button @click="compute">Résultats ></button> <button @click="clean">Remise à 0</button></td>
+        </tr>
+      </tbody>
     </table>
-    <table class="results"></table>
+    <table class="results"><tbody></tbody></table>
   </aside>
 </template>
 
@@ -128,7 +130,7 @@ export default {
       }
 
       // print new ranking results
-      this.$el.querySelector('.results').innerHTML = ''
+      this.$el.querySelector('.results tbody').innerHTML = ''
       const search = (d,i,l) => {
         // search first and last index where pos has changed
         const hasChangedPos = d[1].pos !== (i+1)
@@ -146,12 +148,12 @@ export default {
         let diffPos = (team.pos - (index + 1))
         if (diffPos > 0) diffPos = '+' + diffPos
         if (diffPts > 0) diffPts = '+' + diffPts
-        this.$el.querySelector('.results').innerHTML += `<tr><td>${team.abbreviation}</td><td>${(team.newPts || team.pts).toPrecision(4)}</td><td>(${diffPts})</td><td>${index + 1}</td><td>(${diffPos})</td></tr>`
+        this.$el.querySelector('.results tbody').innerHTML += `<tr><td>${team.abbreviation}</td><td>${(team.newPts || team.pts).toPrecision(4)}</td><td>(${diffPts})</td><td>${index + 1}</td><td>(${diffPos})</td></tr>`
       }
     },
     clean() {
       const uTeams = Object.entries(teams)
-      this.$el.querySelector('.results').innerHTML = ''
+      this.$el.querySelector('.results tbody').innerHTML = ''
       uTeams.filter(e => e[1].newPts).forEach(e => {
         delete e[1].newPts
         delete e[1].newPos
@@ -227,25 +229,20 @@ export default {
     border-collapse   : collapse
     background        : rgba(0,0,0,.3)
     color             : white
-    border-radius     : 5px
-  
+    border-radius     : 5px  
 </style>
+
 <style lang="sass">
   .results
     td
       padding          : 5px
       margin           : 0
       text-align       : left
-      &:nth-of-type(2)
+      &:nth-of-type(2), &:nth-of-type(4)
         text-align     : right
+      &:nth-of-type(2), &:nth-of-type(3)
         width          : 50px
         background     : rgba(0,0,0,.1)
-      &:nth-of-type(3)
-        width          : 50px
-        background     : rgba(0,0,0,.1)
-      &:nth-of-type(4)
-        text-align     : right
-        width          : 20px
-      &:nth-of-type(5)
+      &:nth-of-type(4), &:nth-of-type(5)
         width          : 20px
 </style>
