@@ -237,7 +237,7 @@ export default {
         const ym = y.invert(pointer[1]);
         const i = d3.bisectCenter(data.dates, xm);
         const s = d3.least(data.series.filter(s => s), d => Math.abs(d.values.map(v => v[prop])[i] - ym));
-        path.style('stroke', d => d === s ? colors[d.abbreviation] : '#bbb').filter(d => d === s).raise();
+        path.style('stroke', d => d === s ? colors[d.abbreviation] : '#bbb');//.filter(d => d === s).raise();
         popin.attr('transform', `translate(${x(data.dates[i])},${y(s.values.map(v => v[prop])[i])})`);
         front.select('text.date').text(DateTime.fromJSDate(data.dates[i]).toLocaleString(DateTime.DATE_FULL));
         front.select('text.name').text(`${s.name} (${s.abbreviation})`);
